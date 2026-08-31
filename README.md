@@ -172,9 +172,6 @@ under **Project → Domains** and Vercel provisions SSL once DNS resolves.
 Both work without rewrite rules: `base: './'` keeps asset URLs relative, and `HashRouter`
 keeps project pages resolvable on a static host — including a subpath like `/portfolio/`.
 
-Routing uses `HashRouter`, so project pages work on any static host with no rewrite rules —
-including a plain `dist/index.html` opened from disk.
-
 ---
 
 ## Verify before shipping
