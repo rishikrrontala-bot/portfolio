@@ -1,65 +1,123 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-#  One command: create the GitHub repo, push this project, and turn on Pages.
+#  Puts this site on GitHub and turns on GitHub Pages.
 #
-#      ./deploy.sh                  # repo name defaults to "portfolio"
-#      ./deploy.sh my-site          # or name it yourself
+#      ./deploy.sh                                  # easiest — uses the GitHub CLI
+#      ./deploy.sh https://github.com/you/portfolio # if you made the repo yourself
 #
-#  Needs the GitHub CLI. If you do not have it:  brew install gh
-#  The first run opens a browser to log you in — this script never handles
-#  your password or token itself.
+#  This script never asks you for a password or a token. GitHub's own login
+#  flow does that, in your browser.
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-REPO="${1:-portfolio}"
 cd "$(dirname "$0")"
 
-step() { printf '\n\033[1m→ %s\033[0m\n' "$1"; }
-die()  { printf '\n\033[31m✗ %s\033[0m\n' "$1" >&2; exit 1; }
+bold() { printf '\n\033[1m→ %s\033[0m\n' "$1"; }
+warn() { printf '\033[33m   %s\033[0m\n' "$1"; }
+die()  { printf '\n\033[31m✗ %s\033[0m\n\n' "$1" >&2; exit 1; }
 
-command -v git >/dev/null || die "git is not installed. Install Xcode command line tools: xcode-select --install"
-command -v gh  >/dev/null || die "The GitHub CLI is not installed. Run: brew install gh"
+command -v git >/dev/null || die "git is missing. Install it with: xcode-select --install"
 
-step "Checking your GitHub login"
-gh auth status >/dev/null 2>&1 || gh auth login
-
-OWNER="$(gh api user --jq .login)"
-echo "  signed in as $OWNER"
-
-step "Preparing the repository"
+bold "Preparing the repository"
 [ -d .git ] || git init -q
 git add -A
-git diff --cached --quiet || git commit -q -m "Portfolio site"
+git diff --cached --quiet 2>/dev/null || git commit -q -m "Portfolio site"
 git branch -M main
+echo "   ready"
 
-if gh repo view "$OWNER/$REPO" >/dev/null 2>&1; then
-  echo "  $OWNER/$REPO already exists — pushing to it"
-  git remote get-url origin >/dev/null 2>&1 || git remote add origin "https://github.com/$OWNER/$REPO.git"
-  git push -u origin main
-else
-  step "Creating github.com/$OWNER/$REPO"
-  gh repo create "$REPO" --public --source=. --remote=origin --push \
-    --description "Portfolio — computer science & AI."
+ARG="${1:-}"
+
+# ---------------------------------------------------------------------------
+#  Path A — the GitHub CLI is installed: create the repo, push, enable Pages.
+# ---------------------------------------------------------------------------
+if command -v gh >/dev/null && [[ "$ARG" != http* ]]; then
+  REPO="${ARG:-portfolio}"
+
+  bold "Checking your GitHub login"
+  gh auth status >/dev/null 2>&1 || gh auth login
+  OWNER="$(gh api user --jq .login)"
+  echo "   signed in as $OWNER"
+
+  if gh repo view "$OWNER/$REPO" >/dev/null 2>&1; then
+    bold "Pushing to the existing $OWNER/$REPO"
+    git remote get-url origin >/dev/null 2>&1 \
+      || git remote add origin "https://github.com/$OWNER/$REPO.git"
+    git push -u origin main
+  else
+    bold "Creating github.com/$OWNER/$REPO"
+    gh repo create "$REPO" --public --source=. --remote=origin --push \
+      --description "Portfolio — computer science & AI."
+  fi
+
+  bold "Turning on GitHub Pages"
+  # build_type=workflow publishes what .github/workflows/deploy.yml uploads,
+  # rather than serving the raw repository files.
+  gh api -X POST "repos/$OWNER/$REPO/pages" -f build_type=workflow >/dev/null 2>&1 \
+    || gh api -X PUT "repos/$OWNER/$REPO/pages" -f build_type=workflow >/dev/null 2>&1 \
+    || warn "Could not switch Pages on automatically — do it under Settings → Pages → Source: GitHub Actions."
+  gh api -X PATCH "repos/$OWNER/$REPO" \
+    -f homepage="https://$OWNER.github.io/$REPO/" >/dev/null 2>&1 || true
+
+  cat <<EOF
+
+────────────────────────────────────────────────────────────
+ Pushed to github.com/$OWNER/$REPO
+
+ It is building itself now — the first deploy takes ~2 min.
+   watch it:  gh run watch
+   then open: https://$OWNER.github.io/$REPO/
+
+ Every future 'git push' redeploys it automatically.
+────────────────────────────────────────────────────────────
+
+EOF
+  exit 0
 fi
 
-step "Turning on GitHub Pages"
-# build_type=workflow tells Pages to publish whatever .github/workflows/deploy.yml
-# uploads, instead of serving the raw repository.
-gh api -X POST "repos/$OWNER/$REPO/pages" -f build_type=workflow >/dev/null 2>&1 \
-  || gh api -X PUT "repos/$OWNER/$REPO/pages" -f build_type=workflow >/dev/null 2>&1 \
-  || echo "  (Pages may already be on — check Settings → Pages)"
+# ---------------------------------------------------------------------------
+#  Path B — no GitHub CLI: push to a repo you create in the browser.
+# ---------------------------------------------------------------------------
+if [[ "$ARG" != http* ]]; then
+  cat <<'EOF'
 
-gh api -X PATCH "repos/$OWNER/$REPO" -f homepage="https://$OWNER.github.io/$REPO/" >/dev/null 2>&1 || true
+The GitHub CLI is not installed, so do this instead:
+
+  1. Open  https://github.com/new
+  2. Name it  portfolio, set it to Public, and create it
+     — do NOT tick "Add a README"; the repo must start empty.
+  3. Copy the URL of the new repo and run:
+
+       ./deploy.sh https://github.com/<you>/portfolio
+
+(Or install the CLI once — brew install gh — and just run ./deploy.sh.)
+
+EOF
+  exit 1
+fi
+
+REMOTE="${ARG%.git}.git"
+bold "Pushing to $REMOTE"
+warn "GitHub will ask you to sign in — that happens in your browser, not here."
+git remote get-url origin >/dev/null 2>&1 && git remote set-url origin "$REMOTE" \
+  || git remote add origin "$REMOTE"
+git push -u origin main
+
+SLUG="$(printf '%s' "$ARG" | sed -E 's#^https?://github.com/##; s#\.git$##')"
+OWNER="${SLUG%%/*}"
+REPO="${SLUG##*/}"
 
 cat <<EOF
 
 ────────────────────────────────────────────────────────────
- Pushed.  github.com/$OWNER/$REPO
+ Pushed to github.com/$SLUG
 
- The site builds itself now — first deploy takes ~2 minutes.
- Watch it:   gh run watch
- Then open:  https://$OWNER.github.io/$REPO/
+ One manual step left — turn Pages on:
+   $ARG/settings/pages  →  Source: "GitHub Actions"  →  Save
 
- Every future 'git push' redeploys automatically.
+ The workflow then builds it (~2 min) and the site is at
+   https://$OWNER.github.io/$REPO/
+
+ Every future 'git push' redeploys it automatically.
 ────────────────────────────────────────────────────────────
+
 EOF

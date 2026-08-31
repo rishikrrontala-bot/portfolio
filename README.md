@@ -156,12 +156,21 @@ are SVG and CSS.
 ./deploy.sh
 ```
 
-Creates the repo, pushes, and switches Pages on. It needs the GitHub CLI
-(`brew install gh`) and opens a browser once to log you in — the script never touches your
-password or token. The site is live at `https://<you>.github.io/portfolio/` about two minutes
-later, and `.github/workflows/deploy.yml` rebuilds it on every push after that.
+Creates the repo, pushes it, and switches Pages on. The site is live at
+`https://<you>.github.io/portfolio/` about two minutes later, and
+`.github/workflows/deploy.yml` rebuilds it on every push after that.
 
 Pass a different repo name if you want one: `./deploy.sh my-site`.
+
+Without the GitHub CLI (`brew install gh`) the script tells you to create the empty repo at
+[github.com/new](https://github.com/new) and then takes its URL:
+
+```bash
+./deploy.sh https://github.com/<you>/portfolio
+```
+
+Either way GitHub's own browser login handles the sign-in — the script never sees a password
+or a token.
 
 ### Vercel
 
