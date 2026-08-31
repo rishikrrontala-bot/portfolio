@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bone: #f4f1ea;
+    --bone-deep: #e9e5da;
+    --ink: #100f0d;
+    --ash: #736d63;
+    --terra: #da532c;
+    --gutter: clamp(20px, 4.5vw, 72px);
+    --vh: 1vh;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    background: var(--ink);
+    scroll-behavior: auto;
+  }
+
+  /* Lenis drives scroll; native smooth would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bone);
+    color: var(--ink);
+    font-family: 'Archivo', Helvetica, Arial, sans-serif;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--terra);
+    color: var(--bone);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--terra);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  .gutter {
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+
+  /* ---- Type primitives ------------------------------------------------ */
+
+  .t-display {
+    font-family: 'Archivo', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.045em;
+    line-height: 0.84;
+    text-transform: uppercase;
+  }
+
+  .t-mono {
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-weight: 400;
+    font-size: clamp(9.5px, 0.72vw, 11.5px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .t-lead {
+    font-weight: 500;
+    font-size: clamp(19px, 2.05vw, 32px);
+    line-height: 1.24;
+    letter-spacing: -0.022em;
+  }
+
+  .t-body {
+    font-weight: 400;
+    font-size: clamp(15px, 1.15vw, 18px);
+    line-height: 1.58;
+    letter-spacing: -0.005em;
+    color: #2a2724;
+  }
+
+  .rule {
+    height: 1px;
+    background: currentColor;
+    opacity: 0.16;
+    width: 100%;
+  }
+
+  /* ---- Split-text primitives ----------------------------------------- */
+
+  .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+
+  .word {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* ---- Grain / texture ------------------------------------------------ */
+
+  .grain {
+    position: fixed;
+    inset: -120%;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.34;
+    mix-blend-mode: multiply;
+    background-image: var(--grain-url);
+    background-size: 180px 180px;
+    animation: grainshift 0.7s steps(3) infinite;
+  }
+
+  @keyframes grainshift {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    33% {
+      transform: translate3d(-6%, 3%, 0);
+    }
+    66% {
+      transform: translate3d(4%, -5%, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(16, 15, 13, 0.13) 100%);
+  }
+}
+
+@layer utilities {
+  .drag-none {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+/* ---- Reduced motion --------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    animation: none;
+    opacity: 0.22;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Hide the OS cursor only where the custom one is actually running. */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
