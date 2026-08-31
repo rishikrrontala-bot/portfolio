@@ -150,14 +150,27 @@ are SVG and CSS.
 
 ## Deploy
 
+### GitHub Pages — one command
+
 ```bash
-git init && git add -A && git commit -m "Portfolio"
-gh repo create rishik-portfolio --public --source=. --push
+./deploy.sh
 ```
 
-Then import the repo at [vercel.com/new](https://vercel.com/new). Vercel auto-detects Vite;
+Creates the repo, pushes, and switches Pages on. It needs the GitHub CLI
+(`brew install gh`) and opens a browser once to log you in — the script never touches your
+password or token. The site is live at `https://<you>.github.io/portfolio/` about two minutes
+later, and `.github/workflows/deploy.yml` rebuilds it on every push after that.
+
+Pass a different repo name if you want one: `./deploy.sh my-site`.
+
+### Vercel
+
+Import the repo at [vercel.com/new](https://vercel.com/new). Vercel auto-detects Vite;
 `vercel.json` pins the build command, output directory and asset caching. Add a custom domain
 under **Project → Domains** and Vercel provisions SSL once DNS resolves.
+
+Both work without rewrite rules: `base: './'` keeps asset URLs relative, and `HashRouter`
+keeps project pages resolvable on a static host — including a subpath like `/portfolio/`.
 
 Routing uses `HashRouter`, so project pages work on any static host with no rewrite rules —
 including a plain `dist/index.html` opened from disk.

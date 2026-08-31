@@ -7,6 +7,9 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 const single = process.env.SINGLEFILE === '1';
 
 export default defineConfig({
+  // Relative asset URLs so the same build works at a domain root, in a GitHub
+  // Pages subpath (/portfolio/), and opened straight off disk.
+  base: './',
   plugins: [react(), ...(single ? [viteSingleFile()] : [])],
   build: {
     target: 'es2020',
