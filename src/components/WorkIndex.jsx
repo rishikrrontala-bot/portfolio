@@ -55,7 +55,7 @@ export default function WorkIndex() {
     });
   }, [active, fine, reduced]);
 
-  /* Rows rise in on scroll. */
+  /* Tiles rise in on scroll. */
   useIsoLayoutEffect(() => {
     const el = listRef.current;
     if (!el) return undefined;
@@ -99,17 +99,17 @@ export default function WorkIndex() {
             <span className="t-mono text-ash">
               {String(shown.length).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
             </span>
-            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+            <ul className="flex flex-wrap gap-2">
               {filters.map((f) => (
                 <li key={f}>
                   <button
                     type="button"
                     onClick={() => setFilter(f)}
                     aria-pressed={filter === f}
-                    className={`t-mono border-b pb-1 transition-colors duration-500 ${
+                    className={`t-mono rounded-full border px-4 py-2 transition-colors duration-500 ${
                       filter === f
-                        ? 'border-terra text-terra-deep'
-                        : 'border-transparent text-ash hover:text-ink'
+                        ? 'border-ink bg-ink text-bone'
+                        : 'border-ink/25 text-ash hover:border-ink/55 hover:text-ink'
                     }`}
                     {...cursorProps('hover')}
                   >
@@ -123,7 +123,10 @@ export default function WorkIndex() {
 
         <DrawRule />
 
-        <ul ref={listRef} className="relative">
+        <ul
+          ref={listRef}
+          className="relative mt-[clamp(32px,6vh,72px)] grid gap-x-[clamp(16px,2.6vw,44px)] gap-y-[clamp(44px,7vh,92px)] sm:grid-cols-2"
+        >
           {shown.map((p) => (
             <li key={p.slug} data-row style={{ opacity: 0 }}>
               <Link
@@ -132,52 +135,64 @@ export default function WorkIndex() {
                 onMouseLeave={onLeave}
                 onFocus={() => onEnter(p)}
                 onBlur={onLeave}
-                className="group block border-b border-ink/12 py-[clamp(20px,3.4vh,40px)]"
+                className="group block"
                 {...cursorProps('view', 'VIEW')}
               >
-                <div className="flex items-start gap-5 sm:items-center">
-                  <span className="t-mono w-8 shrink-0 pt-2 text-ash transition-colors duration-500 group-hover:text-terra-deep sm:pt-0">
-                    {p.index}
-                  </span>
-
-                  <div className="min-w-0 flex-1">
-                    <h3
-                      className="t-display transition-[transform,color] duration-700 ease-expo group-hover:translate-x-2 group-hover:text-terra"
-                      style={{ fontSize: 'clamp(30px, 6.2vw, 96px)' }}
-                    >
-                      {p.title}
-                    </h3>
-                    <p className="t-mono mt-3 text-ash sm:hidden">{p.kicker}</p>
-                  </div>
-
-                  {/* Inline plate on touch / narrow screens. */}
+                <div className="relative overflow-hidden rounded-[3px] bg-ink">
                   <ProjectPlate
                     project={p}
                     showIndex={false}
-                    className="ml-auto hidden aspect-[4/5] w-[92px] shrink-0 rounded-[2px] sm:block lg:hidden"
+                    className="aspect-[8/5] w-full transition-transform duration-[1100ms] ease-expo group-hover:scale-[1.045]"
                   />
 
-                  <div className="ml-auto hidden shrink-0 items-center gap-10 lg:flex">
-                    <span className="t-mono text-ash">{p.kicker}</span>
-                    <span className="t-mono w-24 text-right text-ash">{p.status}</span>
-                    <span
-                      className="grid h-10 w-10 place-items-center rounded-full border border-ink/20 transition-all duration-500 group-hover:border-terra group-hover:bg-terra"
-                      aria-hidden="true"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path
-                          d="M1 11L11 1M11 1H3.5M11 1v7.5"
-                          stroke="currentColor"
-                          strokeWidth="1.1"
-                          className="transition-colors duration-500 group-hover:stroke-bone"
-                        />
-                      </svg>
-                    </span>
-                  </div>
+                  {/* Corner arrow — appears on hover, and on keyboard focus so
+                      the affordance is not pointer-only. Bottom right, clear of
+                      the year stamped in the plate's top corner. */}
+                  <span
+                    className="pointer-events-none absolute bottom-4 right-4 grid h-11 w-11 translate-y-2 place-items-center rounded-full border border-bone/45 bg-ink/70 opacity-0 backdrop-blur-[2px] transition-all duration-500 ease-expo group-hover:translate-y-0 group-hover:border-terra group-hover:bg-terra group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="M1 11L11 1M11 1H3.5M11 1v7.5"
+                        stroke="#F4F1EA"
+                        strokeWidth="1.1"
+                      />
+                    </svg>
+                  </span>
                 </div>
 
-                <p className="t-body mt-4 max-w-[62ch] text-ink-soft/80 sm:mt-5">{p.summary}</p>
+                <div className="mt-[clamp(16px,2vh,24px)] flex items-baseline justify-between gap-5">
+                  <h3
+                    className="t-display transition-colors duration-500 group-hover:text-terra"
+                    style={{ fontSize: 'clamp(26px, 3.2vw, 52px)' }}
+                  >
+                    {p.title}
+                  </h3>
+                  <span className="t-mono shrink-0 text-ash">{p.index}</span>
+                </div>
+                <p className="t-mono mt-2.5 text-ash">{p.kicker}</p>
               </Link>
+
+              {/* External links live outside the card link — an anchor cannot
+                  nest inside another anchor. */}
+              {p.links?.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+                  {p.links.map((l) => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="t-mono text-terra-deep transition-colors duration-500 hover:text-ink"
+                        {...cursorProps('hover')}
+                      >
+                        {l.label} ↗
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
@@ -191,7 +206,7 @@ export default function WorkIndex() {
       {fine && !reduced && (
         <div
           ref={previewRef}
-          className="pointer-events-none fixed left-0 top-0 z-[60] -ml-[130px] -mt-[165px] h-[330px] w-[260px] will-change-transform"
+          className="pointer-events-none fixed left-0 top-0 z-[60] -ml-[150px] -mt-[94px] h-[188px] w-[300px] will-change-transform"
           style={{ opacity: 0, visibility: 'hidden' }}
           aria-hidden="true"
         >

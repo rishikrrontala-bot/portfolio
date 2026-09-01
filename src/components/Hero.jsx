@@ -1,15 +1,31 @@
 import { useEffect, useRef, lazy, Suspense } from 'react';
 import { gsap } from '../lib/gsap';
-import { cursorProps, scrollTo, useReducedMotion, useIsDesktop } from '../lib/hooks';
+import { cursorProps, scrollTo, useReducedMotion } from '../lib/hooks';
 import { identity } from '../data/site';
 
-const HeroCanvas = lazy(() => import('./HeroCanvas'));
+const HeroField = lazy(() => import('./HeroField'));
+
+/* Layered procedural wash the field is drawn over. Built from gradients rather
+   than an image so it costs nothing and stays exactly on the palette. */
+const WASH =
+  'radial-gradient(78% 66% at 79% 16%, rgba(218,83,44,0.30) 0%, rgba(218,83,44,0) 62%),' +
+  'radial-gradient(58% 54% at 97% 58%, rgba(179,63,28,0.24) 0%, rgba(179,63,28,0) 70%),' +
+  'radial-gradient(70% 60% at 62% 78%, rgba(115,109,99,0.20) 0%, rgba(115,109,99,0) 68%),' +
+  'radial-gradient(120% 96% at 46% 2%, #F8F5EF 0%, #EFEAE0 52%, #E6E1D4 100%)';
+
+/* Keeps the headline and the mono meta readable over the artwork: bone from the
+   bottom and the left, clear by the time it reaches the top right. */
+const SCRIM =
+  'linear-gradient(to top, rgba(244,241,234,0.94) 0%, rgba(244,241,234,0.76) 24%,' +
+  ' rgba(244,241,234,0.22) 52%, rgba(244,241,234,0) 76%),' +
+  'linear-gradient(to right, rgba(244,241,234,0.80) 0%, rgba(244,241,234,0.34) 32%,' +
+  ' rgba(244,241,234,0) 62%)';
 
 export default function Hero({ ready }) {
   const root = useRef(null);
   const canvasWrap = useRef(null);
+  const veil = useRef(null);
   const reduced = useReducedMotion();
-  const desktop = useIsDesktop();
 
   /* Entry choreography — fires once the preloader has lifted. */
   useEffect(() => {
@@ -34,8 +50,8 @@ export default function Hero({ ready }) {
         )
         .fromTo(
           canvasWrap.current,
-          { autoAlpha: 0, scale: 0.72 },
-          { autoAlpha: 1, scale: 1, duration: 1.9, ease: 'house' },
+          { autoAlpha: 0, scale: 1.08 },
+          { autoAlpha: 1, scale: 1, duration: 2.4, ease: 'house' },
           '-=1.35',
         )
         .fromTo(
@@ -49,21 +65,25 @@ export default function Hero({ ready }) {
     return () => ctx.revert();
   }, [ready, reduced]);
 
-  /* Scroll parallax — headline drifts up slowly, the blob sinks and shrinks. */
+  /* Scroll — the headline drifts up, the artwork pushes in and settles back
+     under a rising veil rather than simply sliding away. The veil is its own
+     element so the scrub never fights the entry timeline over opacity. */
   useEffect(() => {
     if (reduced || !root.current) return undefined;
+    const st = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 };
     const ctx = gsap.context(() => {
-      gsap.to('[data-hero-type]', {
-        yPercent: -22,
-        ease: 'none',
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 },
-      });
+      gsap.to('[data-hero-type]', { yPercent: -22, ease: 'none', scrollTrigger: st });
       gsap.to(canvasWrap.current, {
-        yPercent: 16,
-        scale: 0.86,
+        yPercent: 9,
+        scale: 1.16,
         ease: 'none',
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 },
+        scrollTrigger: st,
       });
+      gsap.fromTo(
+        veil.current,
+        { opacity: 0 },
+        { opacity: 0.62, ease: 'none', scrollTrigger: st },
+      );
     }, root);
     return () => ctx.revert();
   }, [reduced]);
@@ -75,27 +95,34 @@ export default function Hero({ ready }) {
       className="relative flex w-full flex-col justify-end overflow-hidden"
       style={{ minHeight: 'calc(var(--vh, 1vh) * 100)' }}
     >
-      {/* WebGL object */}
+      {/* Generative set-piece, full bleed behind the type. */}
       <div
         ref={canvasWrap}
-        className="pointer-events-none absolute z-0"
-        style={{
-          opacity: 0,
-          right: desktop ? '-5vw' : '-16vw',
-          top: desktop ? '4vh' : '5vh',
-          width: desktop ? '56vw' : '92vw',
-          height: desktop ? '70vh' : '42vh',
-        }}
+        className="pointer-events-none absolute inset-0 z-0 will-change-transform"
+        style={{ opacity: 0, background: WASH }}
         aria-hidden="true"
       >
-        {/* Mounted only after the gate opens: the WebGL chunk is the heaviest
-            thing on the site and must never sit in front of first paint. */}
+        {/* Mounted only after the gate opens: the simulation must never sit in
+            front of first paint. */}
         {ready && (
           <Suspense fallback={null}>
-            <HeroCanvas active />
+            <HeroField active />
           </Suspense>
         )}
       </div>
+
+      {/* Legibility scrim, then the scroll veil on top of it. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{ background: SCRIM }}
+        aria-hidden="true"
+      />
+      <div
+        ref={veil}
+        className="pointer-events-none absolute inset-0 z-[2] bg-bone"
+        style={{ opacity: 0 }}
+        aria-hidden="true"
+      />
 
       {/* Type */}
       <div data-hero-type className="gutter relative z-10 pb-[clamp(88px,12vh,140px)] pt-32 sm:pt-40">

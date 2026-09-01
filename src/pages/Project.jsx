@@ -115,6 +115,24 @@ export default function Project() {
                 </li>
               ))}
             </ul>
+
+            {project.links?.length > 0 && (
+              <ul className="mt-8 flex flex-col gap-3">
+                {project.links.map((l) => (
+                  <li key={l.label}>
+                    <a
+                      href={l.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="t-mono text-terra-deep transition-colors duration-500 hover:text-ink"
+                      {...cursorProps('hover')}
+                    >
+                      {l.label} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </aside>
 
           <div className="max-w-[64ch]">
