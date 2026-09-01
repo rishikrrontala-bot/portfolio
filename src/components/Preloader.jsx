@@ -65,9 +65,9 @@ export default function Preloader({ onEnter }) {
     // The gate covers the page, so keyboard focus has to start here rather than
     // tabbing through the content hidden behind it.
     btnRef.current?.focus({ preventScroll: true });
-    // Fetch the WebGL chunk during the hold, so the object is there the instant
-    // the curtain lifts, without it ever blocking first paint.
-    const warm = () => import('./HeroCanvas');
+    // Fetch the hero artwork's chunk during the hold, so the field is there the
+    // instant the curtain lifts, without it ever blocking first paint.
+    const warm = () => import('./HeroField');
     const idle = typeof window.requestIdleCallback === 'function';
     const id = idle ? window.requestIdleCallback(warm) : setTimeout(warm, 200);
     return () => {

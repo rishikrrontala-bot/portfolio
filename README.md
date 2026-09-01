@@ -1,7 +1,8 @@
 # Rishik Rontala — Portfolio
 
 A single-page portfolio in the vein of [Unseen Studio](https://unseen.co): an entry gate,
-enormous type, one accent colour, a WebGL object, a drag-to-explore plane, and motion that
+enormous type, one accent colour, a generative hero set-piece, a drag-to-explore plane, and
+motion that
 is used to direct attention rather than to decorate.
 
 Bone `#F4F1EA` · Ink `#100F0D` · Terracotta `#DA532C`.
@@ -78,7 +79,7 @@ everything so the whole site moves with one accent.
 | Entry | Load counter → click-and-hold ring → curtain lifts | `components/Preloader.jsx` |
 | Everywhere | Line-masked word reveal on scroll | `components/Reveal.jsx` |
 | Statement | Word-by-word opacity scrubbed to scroll position | `components/Manifesto.jsx` |
-| Hero | Noise-displaced WebGL object, normals rebuilt per frame | `components/HeroCanvas.jsx` |
+| Hero | Generative flow field: particles advected through simplex noise | `components/HeroField.jsx` |
 | World | Infinite drag plane, tiles wrapped modulo the grid | `components/WorldGrid.jsx` |
 | Pointer | Morphing cursor + magnetic attraction | `components/Atmosphere.jsx`, `lib/hooks.js` |
 | Routes | Two curtains — one drops, one lifts | `components/PageShell.jsx` |
@@ -86,25 +87,27 @@ everything so the whole site moves with one accent.
 Lenis drives scroll and is synced to GSAP's ticker, so ScrollTrigger and smooth scrolling never
 fight each other (`lib/hooks.js` → `useSmoothScroll`).
 
-### The one WebGL gotcha worth knowing
+### The hero, and the one canvas gotcha worth knowing
 
-`<shaderMaterial uniforms={obj} />` does **not** guarantee the renderer keeps your object
-reference. Mutating the object you passed in silently does nothing. Read uniforms off the live
-material instead:
+The hero is a flow field: a few thousand particles advected through two octaves of seeded
+simplex noise, each leaving an ink trail, with one slowly travelling region of *coherence*
+inside which the strokes align, sharpen and take terracotta. The legible form is made of the
+same strokes as the noise around it — which is the manifesto's claim, drawn.
 
-```jsx
-const mat = useRef(null);
-useFrame((_, dt) => {
-  const u = mat.current?.uniforms;
-  if (u) u.uTime.value += dt;
-});
-// …
-<shaderMaterial ref={mat} uniforms={uniforms} … />
+Trails decay by **erasing alpha**, not by painting a translucent background colour:
+
+```js
+ctx.globalCompositeOperation = 'destination-out';
+ctx.fillStyle = 'rgba(0,0,0,0.011)';
+ctx.fillRect(0, 0, w, h);
+ctx.globalCompositeOperation = 'source-over';
 ```
 
-The vertex shader also rebuilds its normals by finite difference after displacement. Without
-that step the lighting keeps describing the original sphere and the displacement reads as a flat
-gradient rather than as geometry.
+Painting bone over the canvas each frame would work, but it would also hide the procedural
+gradient wash the canvas is layered over. Strokes are batched into eight paths by coherence, so
+a frame costs eight `stroke()` calls rather than a few thousand. Under `prefers-reduced-motion`
+there is no animation frame at all: a bounded number of simulation steps runs once at mount and
+the finished still stays on screen.
 
 ---
 
@@ -140,11 +143,11 @@ Lighthouse against the production build:
 | SEO | **100** |
 | CLS | **0** |
 
-The WebGL chunk (`three` + `@react-three/fiber`) is code-split, fetched on an idle callback
-while the visitor is looking at the entry gate, and mounted only once the gate opens — so it
-never sits in front of first paint. Fonts load non-blocking. Only `transform` and `opacity`
-are animated. There are no image requests at all: the grain, the covers and the fallback poster
-are SVG and CSS.
+The hero artwork is code-split, fetched on an idle callback while the visitor is looking at the
+entry gate, and mounted only once the gate opens — so it never sits in front of first paint.
+Fonts load non-blocking. Only `transform` and `opacity` are animated. The only image requests on
+the site are the three lazy-loaded project screenshots; the grain, the hero and the remaining
+cover art are canvas, SVG and CSS.
 
 ---
 
@@ -205,14 +208,14 @@ src/
   components/
     Preloader.jsx       entry gate
     Nav.jsx             bar + fullscreen menu (inverts over dark sections)
-    Hero.jsx            kinetic headline + WebGL object
-    HeroCanvas.jsx      R3F scene, simplex-noise displacement shader
+    Hero.jsx            kinetic headline + the hero set-piece
+    HeroField.jsx       Canvas 2D flow field, seeded simplex noise
     Manifesto.jsx       scrubbed statement
-    WorkIndex.jsx       filterable index + cursor-following preview
+    WorkIndex.jsx       filterable image-tile grid + cursor-following preview
     WorldGrid.jsx       infinite drag plane
     About.jsx           about + capabilities marquee
     Contact.jsx         contact + oversized wordmark footer
-    ProjectPlate.jsx    generated cover art
+    ProjectPlate.jsx    project cover: screenshot, or generated art
     Reveal.jsx          the reveal primitives
     Atmosphere.jsx      grain, cursor, scroll progress
     PageShell.jsx       route transitions

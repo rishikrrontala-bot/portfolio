@@ -1,4 +1,15 @@
 import { useMemo } from 'react';
+import anxietyCover from '../assets/work/anxiety-guide.jpg';
+import explainCover from '../assets/work/explain-it-back.jpg';
+import habitatCover from '../assets/work/habitat-pulse.jpg';
+
+/* Real screenshots, cropped to one 8:5 card shape. A project without a shot
+   falls through to the generative plate below. */
+const covers = {
+  'explain-it-back': explainCover,
+  'habitat-pulse': habitatCover,
+  'anxiety-guide': anxietyCover,
+};
 
 /* Deterministic pseudo-random from a string, so a project's artwork is stable
    across reloads but unique per slug. No image assets, nothing to download. */
@@ -18,12 +29,16 @@ function seeded(slug) {
 }
 
 /**
- * Generative cover art for a project. Concentric warped rings over a hue-shifted
- * ground — a contour map of something that will not sit still, which is on the
- * nose for the work but reads as abstract.
+ * Cover art for a project. A real screenshot where one exists; otherwise
+ * generative — concentric warped rings over a hue-shifted ground, a contour map
+ * of something that will not sit still, which is on the nose for the work but
+ * reads as abstract.
  */
 export default function ProjectPlate({ project, className = '', showIndex = true }) {
+  const cover = covers[project.slug];
+
   const { rings, ground } = useMemo(() => {
+    if (covers[project.slug]) return { rings: [], ground: '' };
     const rnd = seeded(project.slug);
     const h = project.hue ?? 18;
     const list = [];
@@ -58,30 +73,50 @@ export default function ProjectPlate({ project, className = '', showIndex = true
   return (
     <div
       className={`relative overflow-hidden bg-ink ${className}`}
-      style={{ background: ground }}
+      style={cover ? undefined : { background: ground }}
       aria-hidden="true"
     >
-      <svg
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full"
-      >
-        <g fill="none" stroke="#F4F1EA">
-          {rings.map((r, i) => (
-            <path key={i} d={r.d} strokeOpacity={r.o} strokeWidth={r.w} />
-          ))}
-        </g>
-      </svg>
+      {cover ? (
+        // Decorative: the card's own title and kicker carry the meaning, and the
+        // whole plate is aria-hidden.
+        <img
+          src={cover}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 h-full w-full"
+        >
+          <g fill="none" stroke="#F4F1EA">
+            {rings.map((r, i) => (
+              <path key={i} d={r.d} strokeOpacity={r.o} strokeWidth={r.w} />
+            ))}
+          </g>
+        </svg>
+      )}
 
       {showIndex && (
         <span
-          className="t-display absolute bottom-[6%] left-[6%] text-bone/85"
+          className={`t-display absolute bottom-[6%] left-[6%] ${
+            cover ? 'rounded-[2px] bg-ink/70 px-2 text-bone' : 'text-bone/85'
+          }`}
           style={{ fontSize: 'clamp(28px, 4.4vw, 64px)', lineHeight: 1 }}
         >
           {project.index}
         </span>
       )}
-      <span className="t-mono absolute right-[6%] top-[7%] text-bone/70">{project.year}</span>
+      <span
+        className={`t-mono absolute right-[6%] top-[7%] ${
+          cover ? 'rounded-[2px] bg-ink/70 px-2 py-1 text-bone' : 'text-bone/70'
+        }`}
+      >
+        {project.year}
+      </span>
     </div>
   );
 }

@@ -16,13 +16,13 @@ export const identity = {
     'I build systems that try to read the parts of people that resist being formalised.',
   location: 'United States',
   timezone: 'America/New_York',
-  email: 'ramadevi.venganti@gmail.com',
+  email: 'rishikrrontala@gmail.com',
   availability: 'Open to internships, research and hackathon teams — 2026/27',
   socials: [
     { label: 'Devpost', href: 'https://devpost.com/rishikrrontala-bot' },
-    { label: 'GitHub', href: 'https://github.com/' },
+    { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
-    { label: 'Email', href: 'mailto:ramadevi.venganti@gmail.com' },
+    { label: 'Email', href: 'mailto:rishikrrontala@gmail.com' },
   ],
 };
 
@@ -68,6 +68,9 @@ export const capabilities = [
   'Interface design',
 ];
 
+// `links` is optional. When present it is a list of { label, href } and is
+// rendered on both the work-index card and the project page. Projects with
+// nothing public to point at simply omit it.
 export const projects = [
   {
     slug: 'emotion-engine',
@@ -98,29 +101,93 @@ export const projects = [
     ],
   },
   {
-    slug: 'prometheus-challenge',
+    slug: 'explain-it-back',
     index: '02',
-    title: 'Prometheus AI Challenge',
-    titleLines: ['Prometheus', 'AI Challenge'],
-    kicker: 'Devpost · First hackathon',
+    title: 'Explain It Back',
+    titleLines: ['Explain', 'It Back'],
+    kicker: 'Study tool · Solo build',
     year: '2026',
-    role: 'Solo — concept, build, demo',
+    role: 'Solo — concept, engine, guard, evaluation, demo film',
     status: 'Submitted',
     tags: ['AI/ML', 'Education', 'Hackathon'],
     hue: 200,
     summary:
-      'An AI/ML educational tool built for the Prometheus August AI Challenge — first hackathon, entered to find out where the floor actually is.',
-    lead: 'You do not learn where your limit is by reading about the limit.',
+      'A study tool built on one rule: it never explains anything. You explain the concept; it finds the holes in what you actually understand and asks you one hard question.',
+    lead: 'Reading your notes feels like understanding. The feeling is the problem.',
     body: [
-      'Prometheus was my first hackathon. The brief: build an AI/ML educational tool, submit a two-minute demo and the source. The deadline was 2:45am. That detail matters more than it should — a deadline that specific tells you the format is about finishing, not about polishing.',
-      'I picked it deliberately. Beginner-friendly, modest prize, less competition — the point of a first entry is to convert an abstraction ("I could probably do a hackathon") into evidence one way or the other.',
-      'What I took from it was less about the model and more about scope: the demo video is the product for two minutes, and anything that cannot be shown in that window may as well not exist. That reframes what you build from the first hour onward.',
+      'Rozenblit and Keil called it the illusion of explanatory depth: people rate their grasp of an everyday mechanism high, then rate it far lower the moment they are made to write out how it actually works. Every study method built on recognition leaves the illusion intact — and an AI that explains a concept beautifully is the strongest recognition hit of all. You read something fluent, it makes sense, and you file that feeling as knowledge.',
+      'What reliably works is generation: producing the explanation yourself, from memory, and finding out where you run out. Almost nobody does it, because it needs a listener knowledgeable enough to catch you and disciplined enough not to rescue you. Explain It Back is that listener. You name a concept, explain it cold, and it diagnoses the shape of what you said — six specific ways a mental model bends, quoted back in your own words — then asks one Socratic question aimed at the biggest structural gap. When it catches you using a term as a substitute for the idea, that term is banned from your next attempt and the ban is enforced.',
+      'The single promise the product makes could not rest on a system prompt, because instructions to a language model are followed most of the time and most is not a guarantee. So the rule is enforced in three independent layers: the prompt, a mechanical scan that deletes answer-asserting sentences before the learner ever sees them, and a badge in the interface so you can watch the tool police itself. Red-teaming the first version showed seven of nine adversarial probes walking straight through — a model hands over the answer just as completely in a teacherly register as in a correction — so two more detection layers went in.',
+      'The last decision was to measure it rather than assert it. The guard corpus scores 97.6% F1 across 39 leak cases at 100% precision, on top of 193 unit tests and 71 browser checks that drive the built file exactly as a judge would, including a full WCAG 2.2 AA pass computed from rendered pixels. Runs against a live model are published as a range — F1 81.3, 84.8, 88.2 across three runs on the same cases — because the range is the honest number and any single one of them would be a choice about which run to show.',
     ],
     highlights: [
-      ['Event', 'Prometheus August AI Challenge, Devpost'],
-      ['Brief', 'AI/ML educational tool + 2-minute demo + source'],
-      ['Format', 'Solo, first hackathon'],
-      ['Took away', 'Build for the demo window, not the README'],
+      ['Event', 'Prometheus August AI Challenge — solo entry'],
+      ['Rule', 'It never explains. Enforced in code, not only in the prompt'],
+      ['Guard', '97.6% F1 over 39 leak cases, at 100% precision'],
+      ['Hard part', 'Making a promise a language model cannot break'],
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' }],
+  },
+  {
+    slug: 'habitat-pulse',
+    index: '03',
+    title: 'Habitat Pulse',
+    titleLines: ['Habitat', 'Pulse'],
+    kicker: 'Hack the Habitat · Live data',
+    year: '2026',
+    role: 'Concept, build — data plumbing, motion, accessibility',
+    status: 'Shipped',
+    tags: ['Live data', 'Climate', 'Hackathon'],
+    hue: 152,
+    summary:
+      'Search any place on Earth for its live air quality, current weather and the threatened species recorded nearby — pulled straight from public APIs, behind a hero that expands as you scroll.',
+    lead: 'Somewhere, right now, there is a number for this place. The work is making it mean something.',
+    body: [
+      'The Hack the Habitat brief was "build tech that protects the planet", which is the kind of prompt that invites a project to tell you what to feel. This one only tells you what is true where you are standing: the live US air quality index with a plain-language health read and a best-effort call on which pollutant is driving it, the current temperature, humidity, wind and today\'s range, and the threatened species recorded within fifty kilometres — sorted by IUCN Red List severity, each one linking back to its GBIF record.',
+      'The rule underneath it was simple and load-bearing: if a number is not real, it does not appear. There is no account, no API key and no backend — every fetch is a direct client-side call to free public data from Open-Meteo and GBIF, and the actions it suggests are tied to what was actually found rather than to generic environmentalism.',
+      'The hero is scroll-driven — a photograph that grows to fill the screen before the tool underneath it appears — which turns motion preference from a nicety into a correctness problem. Reduced-motion visitors get the hero mounted fully expanded with the scrub never attached, so the page scrolls normally. A deep link also mounts expanded, so a shared result is visible immediately, but keeps the scrub, because following a link says nothing about how someone feels about motion. Two separate tested predicates, not one flag.',
+      'The bug worth keeping is in the species query. GBIF\'s Red List category filter silently matches zero records if the categories are comma-joined into one value; it needs repeated query parameters. It passed every test written against the documented example responses and only surfaced by calling the real endpoint — so the fix ships with a regression test pinning the shape of the URL, not just the result.',
+    ],
+    highlights: [
+      ['Event', 'Hack the Habitat 2026'],
+      ['Stack', 'Next.js 16, React 19, TypeScript, Tailwind v4'],
+      ['Rule', 'If a number is not real, it does not appear'],
+      ['Took away', 'A filter that returns zero is worse than one that errors'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/habitat-pulse-hero/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/habitat-pulse-hero' },
+    ],
+  },
+  {
+    slug: 'anxiety-guide',
+    index: '04',
+    title: 'Breathing Room',
+    titleLines: ['Breathing', 'Room'],
+    kicker: 'Writing · A guide for teens',
+    year: '2026',
+    role: 'Solo — writing, structure, build',
+    status: 'Published',
+    tags: ['Writing', 'Mental health', 'Web'],
+    hue: 96,
+    summary:
+      'A teen\'s guide to understanding and managing anxiety — what it actually is, what helps day to day, when to ask for help, and who to ask.',
+    lead: 'Anxiety is something every teenager experiences. Almost none of them are told what to do about it.',
+    body: [
+      'This one is not a system. It is a piece of writing, which is a different kind of problem: nothing compiles, nothing passes, and the only test is whether someone reading it at two in the morning finds something they can use.',
+      'So it is organised around use rather than around the topic. What anxiety is and how it shows up in a body. Things that actually help — a controlled breathing exercise you can follow on the page, movement, journalling, putting the phone down an hour before bed, sleep, being around people who make you feel good. Then the part most guides bury: the specific signs that mean this has stopped being manageable on your own, and the specific people to tell.',
+      'The resources are named and current, not gestured at — Crisis Text Line, the 988 lifeline, Teen Line, the Jed Foundation, ADAA, NIMH, and the school counsellor most students do not know they already have. There are also two sections written for the people around the teenager, because a parent who responds by saying "you have a good life, you should not worry about that" is doing measurable harm without meaning to.',
+      'The tone is the whole design decision. Anything that reads as a lecture gets closed, and anything that reads as reassurance without substance gets ignored. It had to be plain, specific and unembarrassed — the register of someone the same age telling you what they found out.',
+    ],
+    highlights: [
+      ['Format', 'Long-form guide, one static page, no framework'],
+      ['Written for', 'Teenagers first; parents and educators second'],
+      ['Includes', 'Guided breathing, coping tools, named crisis resources'],
+      ['Hard part', 'A register that is neither a lecture nor a hug'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/anxiety-guide/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/anxiety-guide' },
     ],
   },
 ];

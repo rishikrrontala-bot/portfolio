@@ -20,11 +20,11 @@ export default defineConfig({
       ? {}
       : {
           output: {
-            // Keep the WebGL layer out of the critical bundle — it is lazy
-            // imported and must not block first paint.
+            // Keep the motion layer out of the critical bundle. The hero
+            // artwork is plain Canvas 2D now, so there is no Three.js/R3F chunk
+            // to split out any more.
             manualChunks(id) {
               if (!id.includes('node_modules')) return undefined;
-              if (/[\\/](three|@react-three)[\\/]/.test(id)) return 'three';
               if (/[\\/]gsap[\\/]/.test(id)) return 'gsap';
               if (/[\\/](react|react-dom|react-router|react-router-dom|framer-motion)[\\/]/.test(id))
                 return 'react';
