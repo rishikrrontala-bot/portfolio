@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import anxietyCover from '../assets/work/anxiety-guide.jpg';
+import baselineCover from '../assets/work/baseline.jpg';
 import explainCover from '../assets/work/explain-it-back.jpg';
 import habitatCover from '../assets/work/habitat-pulse.jpg';
 
@@ -9,6 +10,7 @@ const covers = {
   'explain-it-back': explainCover,
   'habitat-pulse': habitatCover,
   'anxiety-guide': anxietyCover,
+  baseline: baselineCover,
 };
 
 /* Deterministic pseudo-random from a string, so a project's artwork is stable
