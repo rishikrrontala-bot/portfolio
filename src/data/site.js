@@ -118,7 +118,7 @@ export const projects = [
       'Rozenblit and Keil called it the illusion of explanatory depth: people rate their grasp of an everyday mechanism high, then rate it far lower the moment they are made to write out how it actually works. Every study method built on recognition leaves the illusion intact — and an AI that explains a concept beautifully is the strongest recognition hit of all. You read something fluent, it makes sense, and you file that feeling as knowledge.',
       'What reliably works is generation: producing the explanation yourself, from memory, and finding out where you run out. Almost nobody does it, because it needs a listener knowledgeable enough to catch you and disciplined enough not to rescue you. Explain It Back is that listener. You name a concept, explain it cold, and it diagnoses the shape of what you said — six specific ways a mental model bends, quoted back in your own words — then asks one Socratic question aimed at the biggest structural gap. When it catches you using a term as a substitute for the idea, that term is banned from your next attempt and the ban is enforced.',
       'The single promise the product makes could not rest on a system prompt, because instructions to a language model are followed most of the time and most is not a guarantee. So the rule is enforced in three independent layers: the prompt, a mechanical scan that deletes answer-asserting sentences before the learner ever sees them, and a badge in the interface so you can watch the tool police itself. Red-teaming the first version showed seven of nine adversarial probes walking straight through — a model hands over the answer just as completely in a teacherly register as in a correction — so two more detection layers went in.',
-      'The last decision was to measure it rather than assert it. The guard corpus scores 97.6% F1 across 39 leak cases at 100% precision, on top of 193 unit tests and 71 browser checks that drive the built file exactly as a judge would, including a full WCAG 2.2 AA pass computed from rendered pixels. Runs against a live model are published as a range — F1 81.3, 84.8, 88.2 across three runs on the same cases — because the range is the honest number and any single one of them would be a choice about which run to show.',
+      'The last decision was to measure it rather than assert it. The guard corpus scores 97.6% F1 across 39 leak cases at 100% precision, on top of 193 unit tests and 71 browser checks that drive the built file exactly as a judge would, including a full WCAG 2.2 AA pass computed from rendered pixels. Runs against a live model are published as a range — F1 81.3, 84.8, 88.2 across three runs on the same 16 cases — because the range is the honest number and any single one of them would be a choice about which run to show.',
     ],
     highlights: [
       ['Event', 'Prometheus August AI Challenge — solo entry'],
@@ -126,7 +126,10 @@ export const projects = [
       ['Guard', '97.6% F1 over 39 leak cases, at 100% precision'],
       ['Hard part', 'Making a promise a language model cannot break'],
     ],
-    links: [{ label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' }],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/explain-it-back/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' },
+    ],
   },
   {
     slug: 'habitat-pulse',
