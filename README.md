@@ -63,9 +63,17 @@ counter, the filter chips — updates itself.
 }
 ```
 
-**There are no image files.** Every project cover is generated from its `slug` and `hue` —
-deterministic warped contour rings over a hue-shifted ground (`src/components/ProjectPlate.jsx`).
-Same slug, same artwork, every time, and nothing to download. Change `hue` to recolour a project.
+**Covers are split by context** (`src/components/ProjectPlate.jsx`). On the index — the work
+grid, the hover preview, the drag plane — every project gets generated artwork: deterministic
+warped contour rings over a hue-shifted ground, seeded from the `slug`, so the front of the site
+reads as one set of objects rather than a row of screenshots at a row of different densities.
+Same slug, same artwork, every time, and nothing to download until you open a project.
+
+The project page uses the real thing instead: a screenshot of that project's own landing screen,
+from `src/assets/work/<slug>.jpg` at 1600×1000. Drop a file in, add it to the `covers` map, and
+that page picks it up; a project with no screenshot (a C++ terminal program, say) falls back to
+its generated plate. `hue` recolours the generated art — pick one well away from its neighbours,
+since the plates sit side by side in the grid.
 
 ---
 
@@ -145,9 +153,9 @@ Lighthouse against the production build:
 
 The hero artwork is code-split, fetched on an idle callback while the visitor is looking at the
 entry gate, and mounted only once the gate opens — so it never sits in front of first paint.
-Fonts load non-blocking. Only `transform` and `opacity` are animated. The only image requests on
-the site are the three lazy-loaded project screenshots; the grain, the hero and the remaining
-cover art are canvas, SVG and CSS.
+Fonts load non-blocking. Only `transform` and `opacity` are animated. The index requests no
+images at all — its cover art is SVG and CSS, and the grain and hero are canvas — so the only
+image request on the site is the one lazy-loaded screenshot on a project page you have opened.
 
 ---
 

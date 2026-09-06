@@ -3,14 +3,20 @@ import anxietyCover from '../assets/work/anxiety-guide.jpg';
 import baselineCover from '../assets/work/baseline.jpg';
 import explainCover from '../assets/work/explain-it-back.jpg';
 import habitatCover from '../assets/work/habitat-pulse.jpg';
+import hooklineCover from '../assets/work/hookline.jpg';
+import loopRoomCover from '../assets/work/loop-room.jpg';
 
-/* Real screenshots, cropped to one 8:5 card shape. A project without a shot
-   falls through to the generative plate below. */
+/* The landing screen of each project, cropped to one 8:5 card shape — the
+   first thing a visitor to that project would actually see. Only the project
+   page uses these; a project with nothing to point at (emotion-engine, a C++
+   terminal program) has no entry and falls through to the plate below. */
 const covers = {
   'explain-it-back': explainCover,
   'habitat-pulse': habitatCover,
   'anxiety-guide': anxietyCover,
   baseline: baselineCover,
+  hookline: hooklineCover,
+  'loop-room': loopRoomCover,
 };
 
 /* Deterministic pseudo-random from a string, so a project's artwork is stable
@@ -31,34 +37,64 @@ function seeded(slug) {
 }
 
 /**
- * Cover art for a project. A real screenshot where one exists; otherwise
- * generative — concentric warped rings over a hue-shifted ground, a contour map
- * of something that will not sit still, which is on the nose for the work but
- * reads as abstract.
+ * Cover art for a project.
+ *
+ * Two variants, deliberately split by where the plate appears:
+ *
+ * - `art` (default) — generative: concentric warped rings over a hue-shifted
+ *   ground, a contour map of something that will not sit still. Used
+ *   everywhere on the index, so the front of the site reads as one set of
+ *   objects rather than six unrelated screenshots at six different densities.
+ * - `cover` — the project's own landing screen. Used on the project page,
+ *   where the visitor has committed to one project and wants to see the real
+ *   thing. Falls back to `art` when there is no screenshot.
  */
-export default function ProjectPlate({ project, className = '', showIndex = true }) {
-  const cover = covers[project.slug];
+export default function ProjectPlate({
+  project,
+  className = '',
+  showIndex = true,
+  variant = 'art',
+}) {
+  const cover = variant === 'cover' ? covers[project.slug] : undefined;
 
   const { rings, ground } = useMemo(() => {
-    if (covers[project.slug]) return { rings: [], ground: '' };
+    if (variant === 'cover' && covers[project.slug]) return { rings: [], ground: '' };
     const rnd = seeded(project.slug);
     const h = project.hue ?? 18;
+
+    /* The silhouette itself is seeded, not just the wobble: two harmonic
+       orders, a squash, a rotation and a centre that walks outward as the
+       rings widen. Without this every project is the same object recoloured,
+       which reads as a rendering bug once several sit in one grid. */
+    const m1 = 2 + Math.floor(rnd() * 3); //  2–4 major lobes
+    const m2 = 5 + Math.floor(rnd() * 4); //  5–8 minor lobes
+    const squash = 0.72 + rnd() * 0.34;
+    const rot = rnd() * Math.PI * 2;
+    const driftA = rnd() * Math.PI * 2;
+    const drift = 3 + rnd() * 8;
+    const count = 14 + Math.floor(rnd() * 6);
+
     const list = [];
-    const count = 16;
     for (let i = 0; i < count; i += 1) {
       const t = i / (count - 1);
       const r = 8 + t * 42;
       const wob = 1.4 + rnd() * 5.2;
       const phase = rnd() * Math.PI * 2;
+      // Rings walk off-centre as they widen — a contour map of a slope
+      // rather than a target.
+      const cx = 50 + Math.cos(driftA) * drift * t;
+      const cy = 50 + Math.sin(driftA) * drift * t;
       const pts = [];
       const steps = 84;
       for (let s = 0; s <= steps; s += 1) {
-        const a = (s / steps) * Math.PI * 2;
+        const a = (s / steps) * Math.PI * 2 + rot;
         const rr =
           r +
-          Math.sin(a * 3 + phase) * wob * (0.4 + t) +
-          Math.cos(a * 5 - phase * 1.7) * wob * 0.34;
-        pts.push(`${(50 + Math.cos(a) * rr).toFixed(2)},${(50 + Math.sin(a) * rr * 0.92).toFixed(2)}`);
+          Math.sin(a * m1 + phase) * wob * (0.4 + t) +
+          Math.cos(a * m2 - phase * 1.7) * wob * 0.34;
+        pts.push(
+          `${(cx + Math.cos(a) * rr).toFixed(2)},${(cy + Math.sin(a) * rr * squash).toFixed(2)}`,
+        );
       }
       list.push({
         d: `M${pts.join('L')}Z`,
@@ -70,7 +106,7 @@ export default function ProjectPlate({ project, className = '', showIndex = true
       rings: list,
       ground: `radial-gradient(72% 68% at 34% 26%, hsl(${h} 62% 52%) 0%, hsl(${h} 58% 38%) 38%, hsl(${h} 40% 16%) 72%, #141311 100%)`,
     };
-  }, [project.slug, project.hue]);
+  }, [project.slug, project.hue, variant]);
 
   return (
     <div
@@ -79,7 +115,7 @@ export default function ProjectPlate({ project, className = '', showIndex = true
       aria-hidden="true"
     >
       {cover ? (
-        // Decorative: the card's own title and kicker carry the meaning, and the
+        // Decorative: the page's own title and kicker carry the meaning, and the
         // whole plate is aria-hidden.
         <img
           src={cover}

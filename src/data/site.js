@@ -110,7 +110,7 @@ export const projects = [
     role: 'Solo — concept, engine, guard, evaluation, demo film',
     status: 'Submitted',
     tags: ['AI/ML', 'Education', 'Hackathon'],
-    hue: 200,
+    hue: 222,
     summary:
       'A study tool built on one rule: it never explains anything. You explain the concept; it finds the holes in what you actually understand and asks you one hard question.',
     lead: 'Reading your notes feels like understanding. The feeling is the problem.',
@@ -141,7 +141,7 @@ export const projects = [
     role: 'Concept, build — data plumbing, motion, accessibility',
     status: 'Shipped',
     tags: ['Live data', 'Climate', 'Hackathon'],
-    hue: 152,
+    hue: 171,
     summary:
       'Search any place on Earth for its live air quality, current weather and the threatened species recorded nearby — pulled straight from public APIs, behind a hero that expands as you scroll.',
     lead: 'Somewhere, right now, there is a number for this place. The work is making it mean something.',
@@ -172,7 +172,7 @@ export const projects = [
     role: 'Solo — writing, structure, build',
     status: 'Published',
     tags: ['Writing', 'Mental health', 'Web'],
-    hue: 96,
+    hue: 120,
     summary:
       'A teen\'s guide to understanding and managing anxiety — what it actually is, what helps day to day, when to ask for help, and who to ask.',
     lead: 'Anxiety is something every teenager experiences. Almost none of them are told what to do about it.',
@@ -203,7 +203,7 @@ export const projects = [
     role: 'Solo — design, clinical logic, ML pipeline, tests, deployment',
     status: 'Shipped',
     tags: ['Health', 'Computer vision', 'Hackathon'],
-    hue: 268,
+    hue: 273,
     summary:
       'Concussion is diagnosed on what the injured person tells you, and they are usually motivated to say they\'re fine. Baseline screens for it by watching the eyes instead. Seven VOMS-style tasks, near point of convergence measured in real centimetres, and a recovery curve read against your own baseline. The camera never leaves your machine.',
     lead: 'An oculomotor concussion screening that runs entirely in the browser, and refuses to give you a number when the number would not mean anything.',
@@ -224,6 +224,68 @@ export const projects = [
       { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/baseline' },
     ],
   },
+  {
+    slug: 'hookline',
+    index: '06',
+    title: 'Hookline',
+    titleLines: ['Hookline'],
+    kicker: 'Solo build · Runs in the browser',
+    year: '2026',
+    role: 'Solo — engine, CLI, interface, evaluation',
+    status: 'Shipped',
+    tags: ['NLP', 'Tooling', 'Web'],
+    hue: 69,
+    summary:
+      'One long recording in, a publishable week of channel output out. It measures where a transcript holds attention and cuts where the subject actually changes — no account, no upload, no API key.',
+    lead: 'Ask a model to find the good parts and it hands back the parts that summarise well. A summary is the thing that removes the reason to watch.',
+    body: [
+      'Clipping is the tax on long-form. Six good clips out of a forty-five minute episode — found, trimmed, hooked, titled for three platforms, captioned and scheduled — is four to six hours, every week, forever. The tempting fix is to ask a language model which moments are good, and it fails in a way that is easy to miss: it returns the moments that summarise well, which is close to the opposite of what holds someone on a vertical feed.',
+      'So Hookline does not ask. It measures. Eight independent signals score every sentence — opening construction, open loops, TF-IDF salience, emotional charge, concreteness, payoff, quotability and delivery pace — each a named reading you can inspect rather than a hidden embedding. Cuts may only land on topic boundaries found by lexical cohesion: two windows slide across the transcript, and where the overlap between their vocabularies collapses, the subject has changed. That is what stops a clip ending mid-thought, and the same boundaries generate the chapter markers, so the two outputs cannot disagree about where a topic began.',
+      'The decisions I am most attached to are about what not to score. "Let me be specific about what I mean" is short, first-person and direct, so a naive scorer loves it — but it is stage direction, not content, so discourse management is penalised rather than rewarded. And when a transcript arrives as plain prose with no real timings, the pace signal is withheld entirely instead of being computed from synthesised ones. A fabricated number that looks like a measurement is worse than a missing one.',
+      'The optional model pass rewrites hooks and titles and nothing else — selection, timings, captions, chapters and the schedule are measurements, and measurements are never sent out to be improved. Every failure mode, from a missing key to a malformed response, falls back to the deterministic text, so there is no path where the tool returns an error state instead of a result. The engine itself has zero runtime dependencies, which is why one implementation serves both the browser and the CLI, and why the same transcript yields the same clips on any machine.',
+    ],
+    highlights: [
+      ['Runs', 'In the browser — no account, no upload, no API key'],
+      ['Method', 'Eight measured signals, boundaries by lexical cohesion'],
+      ['Output', 'Clips, hooks, titles, captions, chapters, schedule, ffmpeg script'],
+      ['Hard part', 'Refusing to score a signal it cannot honestly measure'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/hookline/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/hookline' },
+    ],
+  },
+  {
+    slug: 'loop-room',
+    index: '07',
+    title: 'Loop Room',
+    titleLines: ['Loop', 'Room'],
+    kicker: 'Code to Connect · Realtime multiplayer',
+    year: '2026',
+    role: 'Concept, direction, build — realtime, audio, 3D, export',
+    status: 'Shipped',
+    tags: ['Realtime', 'Hackathon', 'Web'],
+    hue: 324,
+    summary:
+      'Four friends, one browser tab each. Build a two-bar loop together, draw a frame each, and leave with a music video none of you could have made alone.',
+    lead: 'No feed, no library, nothing to browse. The only thing you take away is the thing the four of you made in the last ten minutes.',
+    body: [
+      'Code to Connect asked how digital entertainment could be made more joyful and more intentional — how you turn somebody from a consumer into a participant. Most answers to that bolt a social layer onto a feed. Loop Room has no feed and no library; there is nothing in it to consume at all. Up to four people join a room with a four-letter code, and ten minutes later they leave with a file.',
+      'It runs in three stages. Everyone takes an instrument and taps a two-bar loop into a step grid locked to the C major pentatonic scale — there is no pad anyone can press that sounds wrong, which is the point: nobody needs to be a musician and nobody can ruin it. Then the loop keeps playing while the group animates to it, eight frames taken in turns, each drawn over a ghost of the last, with everyone who is not drawing watching the current artist’s ink appear stroke by stroke. Then it plays back inside a 3D room lit by lamps that pulse to the actual audio signal, and one button records exactly two loops to a video with sound.',
+      'The naive build streams one machine’s audio to everyone else. It falls apart on the first network hiccup and sounds worse the further away you sit. Loop Room never sends audio anywhere. Every browser holds the same grid and the same start timestamp, runs a small NTP-style handshake to learn its offset from the server clock, and renders the identical song locally — a coarse interval decides what to play, and the audio thread’s own sample clock decides exactly when. The only thing that has to survive the network is a timestamp, so a dropped packet costs you a pad flash rather than a beat.',
+      'The same clock drives the playhead, the beat-synced filmstrip and the sweeping beam in the 3D scene, which is why the light hitting a node and the sound of that node land together. Instrument ownership is enforced on the server rather than in the interface, because a rule that only exists in the UI is not a rule. Rooms live in memory and are reaped when they empty — there is no database, by choice. Nothing here is worth persisting beyond the session, and the video is the artefact you keep.',
+    ],
+    highlights: [
+      ['Event', 'Code to Connect: Women in Tech Hackathon 2026 — Connect Online'],
+      ['Stack', 'React, TypeScript, WebSocket, Web Audio, three.js, MediaRecorder'],
+      ['Sync', 'NTP-style clock handshake — audio is scheduled, never streamed'],
+      ['Hosting', 'One Node process serves app and socket; the free tier sleeps when idle'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://loop-room.onrender.com' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/loop-room' },
+    ],
+  },
 ];
 
 // The drag-to-explore plane mixes projects with fragments — the way a studio
@@ -237,6 +299,12 @@ export const worldFragments = [
   { kind: 'stat', label: 'Base', value: 'US · EST' },
   { kind: 'statement', text: 'Two people, six characters, opposite meanings.' },
   { kind: 'stat', label: 'Status', value: 'Open' },
+  { kind: 'statement', text: 'A rule that only exists in the interface is not a rule.' },
+  { kind: 'stat', label: 'Also', value: 'TypeScript' },
+  { kind: 'statement', text: 'A summary is the thing that removes the reason to watch.' },
+  { kind: 'stat', label: 'Method', value: 'Measure, not assert' },
+  { kind: 'statement', text: 'A fabricated number that looks like a measurement is worse than a missing one.' },
+  { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
 

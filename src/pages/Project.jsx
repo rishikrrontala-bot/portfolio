@@ -88,7 +88,12 @@ export default function Project() {
         <div ref={plateRef} className="gutter">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[3px] bg-ink max-sm:aspect-[4/5]">
             <div data-plate className="absolute inset-0">
-              <ProjectPlate project={project} showIndex={false} className="h-full w-full" />
+              <ProjectPlate
+                project={project}
+                variant="cover"
+                showIndex={false}
+                className="h-full w-full"
+              />
             </div>
           </div>
         </div>
