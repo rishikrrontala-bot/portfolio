@@ -1,0 +1,47 @@
+name: Snapshot GitHub profile
+
+# Refreshes sync/github.json — the account's public repos, their metadata and
+# READMEs — an hour before the weekly cloud routine reads it to add new
+# projects to src/data/site.js. The routine's sandbox can only see this repo,
+# so the listing has to be fetched here.
+#
+# Pushes made with GITHUB_TOKEN never trigger other workflows, so a snapshot
+# commit does not cause a Pages deploy on its own.
+
+on:
+  schedule:
+    - cron: '0 12 * * 1' # Mondays 12:00 UTC (8am ET)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-sync
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: node scripts/fetch-github.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit the snapshot if it changed
+        run: |
+          if [ -z "$(git status --porcelain -- sync/github.json)" ]; then
+            echo "Snapshot unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sync/github.json
+          git commit -m "Refresh GitHub profile snapshot"
+          git push

@@ -183,6 +183,19 @@ Without the GitHub CLI (`brew install gh`) the script tells you to create the em
 Either way GitHub's own browser login handles the sign-in — the script never sees a password
 or a token.
 
+### Keeping the work index in step with GitHub
+
+Every Monday `.github/workflows/github-sync.yml` runs `scripts/fetch-github.mjs`, which
+writes the account's public repos — description, homepage, topics, languages, README — to
+`sync/github.json` and commits it only when something changed. An hour later a scheduled
+Claude Code routine reads that file, writes a `projects` entry for any repo not yet in
+`site.js`, and opens a pull request. Merging it deploys. Nothing is added to the site
+without a review, and nothing in the entry can come from anywhere but the repo's own README.
+
+The snapshot is fetched here rather than by the routine because the routine's sandbox can
+only reach this repository. Run it by hand with `GITHUB_TOKEN=$(gh auth token) node
+scripts/fetch-github.mjs`.
+
 ### Vercel
 
 Import the repo at [vercel.com/new](https://vercel.com/new). Vercel auto-detects Vite;
@@ -231,4 +244,7 @@ src/
 scripts/
   verify.mjs            the accessibility + semantics suite
   shoot.mjs             screenshot every section at two viewports
+  fetch-github.mjs      snapshot the GitHub profile into sync/github.json
+sync/
+  github.json           the account's public repos, metadata and READMEs
 ```
