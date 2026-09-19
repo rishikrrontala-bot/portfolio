@@ -286,6 +286,68 @@ export const projects = [
       { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/loop-room' },
     ],
   },
+  {
+    slug: 'leaseleak',
+    index: '08',
+    title: 'LeaseLeak',
+    titleLines: ['Lease', 'Leak'],
+    kicker: 'VentureFix 2026 · Solo build',
+    year: '2026',
+    role: 'Solo — data pipeline, deterministic engine, AI verification layer, deploy',
+    status: 'Shipped',
+    tags: ['AI/ML', 'Hackathon', 'Tooling'],
+    hue: 95,
+    summary:
+      'Drop a rent roll and it matches every unit to HUD and Zillow benchmarks, times renewals to the seasonal peak, and writes the renewal letters — with an AI layer that gets checked on every number it cites.',
+    lead: 'Every dollar figure on the page is computed by a deterministic engine. The model only writes the memo, and it is checked on every number it uses.',
+    body: [
+      'Built solo for VentureFix 2026\'s Venture Build track. You drop a CSV or XLSX rent roll and, five seconds later, see how far under market each unit is against HUD\'s Small Area Fair Market Rent for its ZIP and bedroom count, which leases end in the wrong month, and a renewal letter already written for each one. FMR is the 40th percentile of local gross rents, so the gap it reports is a conservative floor, not an inflated pitch number.',
+      'The same base numbers get reused rather than re-derived: Zillow\'s ZORI index turns into a seasonal curve so renewal terms can be timed to end at the local peak, the gap gets priced as building equity through an adjustable cap rate, and HUD\'s voucher payment standards are checked against the same rents to see where a housing voucher would close the gap without raising anyone\'s rent. A rent-to-income check against Census ACS data flags any proposed increase that would push a household over 30% of income before a letter goes out.',
+      'The model is only allowed to do what a spreadsheet cannot: it writes the headline, the prioritised actions and a caution in plain language, sending it only the unit figures with tenant names stripped. Nothing it writes is trusted on its own — a client-side check pulls every dollar, percentage and month figure out of the model\'s reply and matches each one against the engine\'s own output, so the interface can say exactly how many of the cited figures trace back to a real computation and flag the one that does not.',
+      'The Gemini calls run through a Vercel function with an origin allow-list, a per-IP rate limit and a 200 KB body cap, and the same functions are called cross-origin from the GitHub Pages mirror. Everything else — the matching, the gap math, the seasonal timing, the letters — runs in the browser with no account and no upload.',
+    ],
+    highlights: [
+      ['Event', 'VentureFix 2026 — Venture Build track, solo entry'],
+      ['Data', 'HUD Small Area FMR (38,601 ZIPs), Zillow ZORI, Census ACS income'],
+      ['Guard', "Every AI-cited figure is matched back against the engine's own numbers"],
+      ['Hard part', 'Keeping a language model from citing a number it did not compute'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://leaseleak.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/leaseleak' },
+    ],
+  },
+  {
+    slug: 'earshot',
+    index: '09',
+    title: 'Earshot',
+    titleLines: ['Earshot'],
+    kicker: 'TechCommons Hacks V2 · Solo build',
+    year: '2026',
+    role: 'Solo — protocol design, DSP, interface, verification',
+    status: 'Shipped',
+    tags: ['Audio', 'Web', 'Hackathon'],
+    hue: 351,
+    summary:
+      'A 16-tone acoustic modem built from scratch in the browser — one device plays a message as sound, every other device in the room decodes it back to text, with no network, pairing or install.',
+    lead: 'When the network goes down, the phones in the room still work. They just cannot talk to each other. Sound can carry that.',
+    body: [
+      'Bluetooth needs pairing, one device at a time. AirDrop is Apple-only. A QR code is one reader at a time and caps out around two kilobytes. None of them get the same sentence onto thirty phones at once when the network is gone — but sound is omnidirectional and one-to-many for free, and every phone made in the last twenty years can already produce and hear it.',
+      'Earshot is a 16-tone, continuous-phase FSK modem written from scratch in TypeScript, with no audio or DSP libraries. It modulates across 1500–3625 Hz at 125 Hz spacing, 32 ms symbols, for a data rate of 125 bits per second. Each frame is framed with sync symbols, payload nibbles, a CRC-8 and an end tone, and detection runs a Hann-windowed Goertzel filter over eighteen tones with a confidence gate. Timing is recovered by refining the onset against the sync plateau, then searching sub-symbol offsets and letting the CRC arbitrate which one is right.',
+      'Reliability comes entirely from retransmission rather than acknowledgement: the transmitter repeats the whole frame blindly, and the first copy that passes CRC wins. Measured against synthetic channels, it decodes correctly at −13 dB SNR, produces zero false messages across 120 seconds of pure white noise, and survives simulated room reverb and arbitrary timing offsets. A 28-character alert costs 2.0 seconds of airtime, or 6.0 seconds sent three times for safety.',
+      'The README is upfront about what this is not: not private, since anything within earshot receives it — that is the mechanism, not a bug; not fast, at 15.6 bytes a second it is for a sentence, not a file; and not guaranteed, since there is no acknowledgement and the transmitter just hopes the retransmissions land.',
+    ],
+    highlights: [
+      ['Event', 'TechCommons Hacks V2 — solo entry'],
+      ['Protocol', '16-tone continuous-phase FSK, 1500–3625 Hz, 125 bps'],
+      ['Measured', '−13 dB SNR decode; 0 false messages in 120 s of white noise'],
+      ['Hard part', 'No pairing and no acknowledgement — just retransmission and a CRC'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/earshot/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/earshot' },
+    ],
+  },
 ];
 
 // The drag-to-explore plane mixes projects with fragments — the way a studio
@@ -304,6 +366,8 @@ export const worldFragments = [
   { kind: 'statement', text: 'A summary is the thing that removes the reason to watch.' },
   { kind: 'stat', label: 'Method', value: 'Measure, not assert' },
   { kind: 'statement', text: 'A fabricated number that looks like a measurement is worse than a missing one.' },
+  { kind: 'statement', text: 'The model can write the memo. It does not get to write the numbers.' },
+  { kind: 'statement', text: 'Sound is omnidirectional and one-to-many for free.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
