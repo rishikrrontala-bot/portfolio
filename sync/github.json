@@ -23,7 +23,9 @@
       "topics": [],
       "language": "HTML",
       "languages": {
-        "HTML": 277823
+        "HTML": 313630,
+        "JavaScript": 180184,
+        "CSS": 32387
       },
       "license": null,
       "readme": null
