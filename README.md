@@ -38,6 +38,14 @@ make this yours.
 | `worldFragments` | The statements and stats interleaved into the drag plane |
 | `nav` | Menu items |
 
+### Completed projects only
+
+The portfolio is a curated list, not an automatic list of repositories. Add a project only when its implementation is working and its README or handoff documents the delivered scope. A deployment URL or an expired deadline is not completion evidence. Check the current README: repository descriptions can retain old “in progress” text.
+
+Keep placeholder repositories and partially integrated builds out. A completed prototype may be listed when its intended interaction works; label its scope and limitations explicitly. Do not claim submission just because a build is finished. For a private repository, link only its public app.
+
+The October 7, 2026 review retained eight verified existing projects and added Scent Shelf, Stillwarm, In Its Place, Sightline, Withheld, Submitline, Returnline and Patchline. Muslin remains excluded because its photo pipeline is not integrated. Emoji → Emotion was removed because its completion could not be verified from the account. Remaining hackathon placeholder repositories are excluded.
+
 ### Adding a project
 
 Append an object to `projects`. Everything else — the index row, the hover preview, a tile on
