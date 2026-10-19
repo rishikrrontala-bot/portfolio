@@ -736,7 +736,94 @@ export const projects = [
       }
     ]
   },
-
+  {
+    slug: 'set-room',
+    index: '17',
+    title: 'Set Room',
+    titleLines: ['Set', 'Room'],
+    kicker: 'Classroom tool · Side project',
+    year: '2026',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Built',
+    tags: ['Realtime', 'Education', 'Web'],
+    hue: 299,
+    summary:
+      'A daily SET card competition for a classroom league — every class sees the same twelve-card board, the server times and verifies every match, and a leaderboard tracks each class\'s best run.',
+    lead: 'Same twelve cards, same six sets, every class in the league, every day.',
+    body: [
+      'Set Room runs a classroom-scale SET competition. Each day every class in a league sees the same twelve-card board with exactly six sets to find. The default mode is fixed — matched cards stay in place and a repeated triple does not count again — while Refill and Sprint variants replace matched cards and allow a combination to repeat once it reappears, ending after six and three sets respectively.',
+      'Matches are verified and timed on the server rather than trusted from the client. The timer stops after the final valid set, and the server saves the official time against the class and the New York puzzle date, so the daily and all-time leaderboards reflect what actually happened rather than what a browser reported. Playing by room code needs no account; an account only exists to save a room\'s shortcut across devices.',
+      'The server also owns every write. A new attempt receives a private write token, so viewing a class\'s history cannot be used to forge a later change, and the full round history — completed, ended and unfinished — is kept rather than just the day\'s winner. It is an independent recreation of SET, not affiliated with the original publisher, built on Next.js with Turso/libSQL for storage and Better Auth for the optional accounts.',
+    ],
+    highlights: [
+      ['Format', 'Daily twelve-card board, six sets, shared across a class league'],
+      ['Variants', 'Original keeps the board fixed; Refill and Sprint refresh the cards'],
+      ['Trust', 'Server times and validates every match; private write tokens guard history'],
+      ['Hard part', 'Keeping the leaderboard honest without trusting the client'],
+    ],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/set-room' },
+    ],
+  },
+  {
+    slug: 'offcut',
+    index: '18',
+    title: 'Offcut',
+    titleLines: ['Offcut'],
+    kicker: 'Banana Hacks 2026 · Solo build',
+    year: '2026',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Built',
+    tags: ['Computer vision', 'Tooling', 'Hackathon'],
+    hue: 249,
+    summary:
+      'A tool that turns a photo of separated coloured paper scraps into a finite material inventory, an achievable collage, and a numbered actual-size cutting plan — never duplicating or recolouring a source piece.',
+    lead: 'Every square in the collage traces back to one real piece of paper, and the app says so when it runs out.',
+    body: [
+      'OFFCUT turns a photograph of four to eight separated coloured scraps into a collage — a Heart, Flower or Bird template, or an uploaded target cropped to a central square — built only from pieces that actually exist in that photograph. A rectangular Hungarian assignment matches each grid cell to the closest-coloured source tile by CIELAB distance, using every source piece at most once; when the inventory runs short, the app reports a shortage rather than quietly recolouring or duplicating a piece.',
+      'Getting from a photograph to real materials needed two pretrained models and careful geometry. OpenCV rectifies the perspective of the A4 reference sheet to 1050×1485 pixels at 5 px/mm, and a browser-local SlimSAM model proposes mask boundaries from contrast points, with every boundary inspectable and correctable by hand before use. A 12 mm source square is only accepted when its whole footprint plus a 1 mm margin sits inside one confirmed mask.',
+      'The output is a printable, actual-size cutting and assembly plan: a 20 mm calibration square to check before cutting, numbered source IDs mapped to assembly cells, and four overlapping cutting viewports so no piece is duplicated across pages. 59 unit tests and nine browser checks pass against both the local build and the public deployment, including a narrated walkthrough on an illustrated example. The README is explicit about what remains unverified: no real camera photograph has been evaluated end to end, and no physical assembly has been checked.',
+    ],
+    highlights: [
+      ['Event', 'Banana Hacks 2026 — solo entry'],
+      ['Pipeline', 'OpenCV perspective correction, then browser-local SlimSAM segmentation'],
+      ['Rule', 'Every source square is used at most once; a shortage is reported, not hidden'],
+      ['Hard part', 'No real camera photo or physical assembly has been verified yet'],
+    ],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/offcut' },
+    ],
+  },
+  {
+    slug: 'patchline-lab',
+    index: '19',
+    title: 'Patchline Lab',
+    titleLines: ['Patchline', 'Lab'],
+    kicker: 'Next Founders · Solo build',
+    year: '2026',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Shipped',
+    tags: ['Tooling', 'Research', 'Hackathon'],
+    hue: 157,
+    summary:
+      'A local workbench for wearable-sensor research — load a CSV recording, compare it against a reference or repeat, and trace every flagged discrepancy back to its exact sample and the rule that flagged it.',
+    lead: 'A discrepancy is not proof of drift. The workbench says which one it found, and declines to say more.',
+    body: [
+      'Patchline Lab is a separate edition of Patchline, built for Next Founders. It loads a CSV of sensor readings — temperature, wetness, pH or glucose, one sensor is enough — maps its columns and units, then compares it against a reference or repeat recording under declared alignment, tolerance, uncertainty and coverage assumptions. Every flagged value traces back to its exact sample, its neighbours, and the rule that triggered it.',
+      'The comparison logic is deliberately narrow. For an absolute difference d, uncertainty bound u and tolerance t, a reading is within when d + u is at most t, exceeds when d − u is greater than t, and uncertain otherwise — with insufficient pairs or coverage producing an inconclusive result rather than a forced answer. There is no interpolation or extrapolation between samples, and a reference that changes faster than the declared step limit makes the comparison unavailable instead of answering anyway.',
+      'A historical synthetic benchmark (seed 42, 75 of 100 faults detected) stays fixed and separate, so later reference tests cannot retroactively improve it, and an independent 5,000-row UCI temperature dataset proves only that the import pipeline handles real external data — not that the system detects real faults. 120 analytic test cases and 112 business-logic tests pass, and the README states directly that no diagnosis, treatment recommendation or hardware control is provided.',
+    ],
+    highlights: [
+      ['Event', 'Next Founders — a separate solo edition of Patchline'],
+      ['Rule', 'Within when d + u is at most t, exceeds when d − u is greater than t, else uncertain'],
+      ['Evidence', '120 analytic test cases, plus a fixed historical benchmark'],
+      ['Hard part', 'Importing a real dataset without claiming it proves accuracy'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://patchline-lab.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/patchline-lab' },
+    ],
+  },
 ];
 
 // The drag-to-explore plane mixes projects with fragments — the way a studio
@@ -751,12 +838,15 @@ export const worldFragments = [
   { kind: 'statement', text: 'Two people, six characters, opposite meanings.' },
   { kind: 'stat', label: 'Status', value: 'Open' },
   { kind: 'statement', text: 'A rule that only exists in the interface is not a rule.' },
+  { kind: 'statement', text: 'The server owns the clock. The client only displays it.' },
   { kind: 'stat', label: 'Also', value: 'TypeScript' },
   { kind: 'statement', text: 'A summary is the thing that removes the reason to watch.' },
   { kind: 'stat', label: 'Method', value: 'Measure, not assert' },
   { kind: 'statement', text: 'A fabricated number that looks like a measurement is worse than a missing one.' },
   { kind: 'statement', text: 'The model can write the memo. It does not get to write the numbers.' },
+  { kind: 'statement', text: 'A finished square still has to point back to a real piece of paper.' },
   { kind: 'statement', text: 'Sound is omnidirectional and one-to-many for free.' },
+  { kind: 'statement', text: 'A discrepancy is not proof of drift.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
