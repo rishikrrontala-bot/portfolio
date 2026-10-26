@@ -736,6 +736,271 @@ export const projects = [
       }
     ]
   },
+  {
+    "slug": "offcut",
+    "index": '17',
+    "title": "Offcut",
+    "titleLines": [
+      "Offcut"
+    ],
+    "kicker": "Banana Hacks 2026 · Solo build",
+    "year": "2026",
+    "role": "Solo — computer-vision pipeline, optimization, interface and verification",
+    "status": "Built",
+    "tags": [
+      "Computer vision",
+      "Hackathon",
+      "Tooling"
+    ],
+    "hue": 157,
+    "summary": "A photograph of leftover paper scraps becomes a finite material inventory, an achievable collage and a numbered actual-size cutting plan — one unique source square per cell, nothing recoloured or duplicated.",
+    "lead": "Every square in the collage is paper that actually exists. None of it is invented.",
+    "body": [
+      "Offcut was built solo for Banana Hacks 2026. Photograph four to eight flat, separated paper scraps on a reference sheet, and the app turns them into a finite material inventory, a collage built from original crops of that same photograph, and a numbered actual-size plan for cutting and assembling it.",
+      "The pipeline runs in the browser: OpenCV rectifies the perspective from the photographed reference sheet, and a browser-local pretrained SlimSAM model proposes segmentation masks from contrast-supplied points, with brushing, keyboard rectangle editing, zoom and undo to correct them before anything is confirmed. No image is uploaded to an API to make this work — the model weights and runtime download from Hugging Face and CDNs, which is the only network exposure.",
+      "Matching is a rectangular Hungarian assignment minimising squared CIELAB colour distance, run over a 14mm lattice that keeps candidate pieces from overlapping, and each source square can be used at most once — a capacity shortage blocks the match rather than quietly reusing or recolouring a piece. The output is a printable HTML plan at true 100% scale with a calibration square to check before cutting, and overlapping viewports that map every numbered piece back to where it came from in the original photograph.",
+      "Fifty-nine unit tests and nine browser checks — covering real pretrained inference, not a mock — passed both locally and against the deployed build before the Devpost entry was confirmed submitted. The README is explicit about the limits: no real camera photographs have been evaluated at scale, no physical assembly is verified, and no human usability result is claimed."
+    ],
+    "highlights": [
+      [
+        "Event",
+        "Banana Hacks 2026"
+      ],
+      [
+        "Method",
+        "OpenCV rectification, SlimSAM segmentation, Hungarian assignment on CIELAB distance"
+      ],
+      [
+        "Rule",
+        "Every square traces to one real, unique source piece — nothing recoloured or duplicated"
+      ],
+      [
+        "Hard part",
+        "Allocating pieces honestly instead of quietly reusing or recolouring one"
+      ]
+    ],
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rishikrrontala-bot/offcut"
+      }
+    ]
+  },
+  {
+    "slug": "patchline-bench",
+    "index": '18',
+    "title": "Patchline Bench",
+    "titleLines": [
+      "Patchline",
+      "Bench"
+    ],
+    "kicker": "Next Founders Hackathon",
+    "year": "2026",
+    "role": "Direction and implementation — synthetic-signal simulator, classifier, PCB draft, firmware, verification",
+    "status": "Shipped",
+    "tags": [
+      "AI/ML",
+      "Simulation",
+      "Hackathon"
+    ],
+    "hue": 249,
+    "summary": "A nonclinical sensing bench that generates synthetic wound-signal traces, classifies them with a model trained from scratch, and lays out its own exploded-view hardware assembly — with a PCB draft and firmware that compile but have not yet been measured on real hardware.",
+    "lead": "Before a system reacts to a signal, it first has to admit the hardware behind it hasn't been built yet.",
+    "body": [
+      "Patchline Bench is a separate build from the original Patchline hackathon entry: a nonclinical sensing and signal-review prototype rather than a continuation of it. It generates a reproducible steady, coordinated-shift or sensor-fault signal window, shows four charts and local model likelihoods, and logs a virtual rehearsal against an eligible synthetic window. Readings can come from an imported JSON file or a real USB serial port in a compatible browser — either way, bench and imported windows are always held, with no hardware actuation and no therapeutic dose anywhere in the app.",
+      "The classifier behind it was trained from scratch on 1,200 simulated runs, model-selected on 300 separate validation runs, and evaluated on 300 independent test runs: 89.7% accuracy, 89.4% macro F1, and 31 of 100 injected sensor faults missed — reported as exactly that, not as evidence of infection detection or of generalising to real sensors. A separate quality gate flags missing or held signals and blocks rehearsal on an estimated fault or low confidence, and its review threshold is stated plainly as a demo policy rather than a clinical one.",
+      "The hardware side is scoped the same way. A Python tool drafts the passive PCB, netlist and layer-aware connectivity checks, and two firmware modes compile for the target ESP32 and pass native host-stub tests, including simulated I²C failures — but real hardware measurements are still pending, and the board has no input protection or patient-contact design yet.",
+      "Featherless-hosted GLM 5.2 supplied an initial simulator implementation that was corrected and tested locally, and DeepSeek-V3.2 ran an independent firmware review, with both its verified findings and its rejected errors kept on record. The exploded-view assembly animation, built from original vector illustrations over real hub routing, collapses to an instant cut under reduced motion instead of scrubbing on scroll."
+    ],
+    "highlights": [
+      [
+        "Event",
+        "Next Founders Hackathon"
+      ],
+      [
+        "Model",
+        "89.7% accuracy / 89.4% F1 on held-out synthetic runs; 31 of 100 faults missed"
+      ],
+      [
+        "Hardware",
+        "PCB draft, netlist and ESP32 firmware compiled — real measurements still pending"
+      ],
+      [
+        "Hard part",
+        "Building a quality gate that actually holds rehearsal, not one that only reports"
+      ]
+    ],
+    "links": [
+      {
+        "label": "Live demo",
+        "href": "https://patchline-bench.vercel.app"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rishikrrontala-bot/patchline-bench"
+      }
+    ]
+  },
+  {
+    "slug": "patchline-lab",
+    "index": '19',
+    "title": "Patchline Lab",
+    "titleLines": [
+      "Patchline",
+      "Lab"
+    ],
+    "kicker": "Next Founders Hackathon · Solo build",
+    "year": "2026",
+    "role": "Solo — research engine, comparison logic, economics module, verification",
+    "status": "Shipped",
+    "tags": [
+      "Tooling",
+      "Research",
+      "Hackathon"
+    ],
+    "hue": 82,
+    "summary": "A local workbench for wearable-sensor research: map a recording, trace a finding to its exact sample, compare it against a reference or repeat run, and reproduce the whole investigation from an exported workspace.",
+    "lead": "A check that only compares shapes can pass while a real control still shows a discrepancy.",
+    "body": [
+      "Patchline Lab is a separate, solo-built edition of Patchline for Next Founders — a local measurement workbench for wearable-sensor research rather than another hackathon pitch for the same product. It runs with no dependencies, account, API key or runtime AI service: load a recording, inspect the exact evidence behind a finding, compare it against a reference or repeat experiment, and reproduce the whole investigation later from an exported workspace.",
+      "A sample investigation loads a labelled, gradually-modified synthetic control next to its unchanged original, so a shape-only check can pass while the supplied control still reveals a real discrepancy. For real data, it imports 5,000 credited environmental readings from a public UCI dataset unchanged, with 76 sampling gaps left visible, or accepts an uploaded CSV under strict bounds — 1 MiB, 5,000 rows, 16 columns, with duplicate headers, ragged rows and malformed quotes rejected outright.",
+      "Comparisons resolve to within, exceeds or uncertain against a declared tolerance and uncertainty bound, and the README is explicit about what that result does not prove: neither a repeat difference nor a reference discrepancy establishes sensor drift or calibration accuracy. The original Patchline synthetic benchmark — seed 42, 75 of 100 faults detected, 25 drift misses, zero false holds on clean data — is kept fixed and untouched by anything the Lab computes.",
+      "GLM 5.2, reached through Featherless, generated add-on modules and an earlier interface as a coding assistant; everything it produced was corrected, reviewed and independently tested locally before shipping, and the delivered app never calls Featherless at runtime. 120 independent analytic test cases and a verified 5,000-row pipeline back the comparison logic, alongside a finished five-minute silent demo with a matched voiceover script."
+    ],
+    "highlights": [
+      [
+        "Event",
+        "Next Founders Hackathon — solo entry"
+      ],
+      [
+        "Data",
+        "UCI Room Occupancy Estimation dataset (CC BY 4.0), 5,000 credited readings"
+      ],
+      [
+        "Rule",
+        "A shape-only match can pass while a supplied control still reveals a discrepancy"
+      ],
+      [
+        "Hard part",
+        "Comparing against a reference without ever claiming to prove drift or accuracy"
+      ]
+    ],
+    "links": [
+      {
+        "label": "Live demo",
+        "href": "https://patchline-lab.vercel.app"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rishikrrontala-bot/patchline-lab"
+      }
+    ]
+  },
+  {
+    "slug": "runofflab",
+    "index": '20',
+    "title": "RunoffLab",
+    "titleLines": [
+      "Runoff",
+      "Lab"
+    ],
+    "kicker": "Side project",
+    "year": "2026",
+    "role": "Concept and direction — terrain-based runoff simulation, static deployment, documented limitations",
+    "status": "Shipped",
+    "tags": [
+      "Climate",
+      "Simulation",
+      "Web"
+    ],
+    "hue": 286,
+    "summary": "Run a hypothetical storm over real New Jersey LiDAR terrain, place rain gardens, and compare modelled ponding against a tracked water balance — an experiment with stated assumptions, not a flood forecast.",
+    "lead": "A rain garden either holds the water it claims to, or it doesn't. The model has to track where every drop actually goes.",
+    "body": [
+      "RunoffLab runs a hypothetical storm over public New Jersey LiDAR terrain at Mercer County Park. Place rain gardens, repeat the same storm, and compare the modelled ponding before and after — framed throughout as an experiment with stated assumptions, not a flood forecast or an engineering design.",
+      "The model is organised around a water balance that tracks every destination the runoff can reach, so a design is judged on where the water actually ends up rather than on a single ponding figure. The deployed `main` branch is a compiled static site; a separate `source` branch keeps the runnable application, its tests, the prepared terrain data, the training and evaluation tools, and the evidence and limitations documents that the static export leaves out.",
+      "Live requests to the trained model are disabled on the public deployment — it ships with recorded model answers instead — while every rain-garden design a visitor proposes is still simulated live in their own browser. Model weights and any private credentials are kept out of what's published, and AI coding assistants wrote the implementation under direction rather than unsupervised."
+    ],
+    "highlights": [
+      [
+        "Terrain",
+        "Public New Jersey LiDAR data, Mercer County Park"
+      ],
+      [
+        "Method",
+        "Repeat the same storm, compare modelled ponding, reconcile a full water balance"
+      ],
+      [
+        "Boundary",
+        "Stated-assumption experiment, not a flood forecast or engineering design"
+      ],
+      [
+        "Split",
+        "Static main branch for Pages; runnable source, tests and evidence kept on a separate branch"
+      ]
+    ],
+    "links": [
+      {
+        "label": "Live demo",
+        "href": "https://rishikrrontala-bot.github.io/runofflab/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rishikrrontala-bot/runofflab"
+      }
+    ]
+  },
+  {
+    "slug": "set-room",
+    "index": '21',
+    "title": "Set Room",
+    "titleLines": [
+      "Set",
+      "Room"
+    ],
+    "kicker": "Side project",
+    "year": "2026",
+    "role": "Concept, build — game logic, realtime rooms, accounts and leaderboards",
+    "status": "Built",
+    "tags": [
+      "Education",
+      "Web",
+      "Tooling"
+    ],
+    "hue": 299,
+    "summary": "A classroom SET competition with a locked daily board, saved rooms, full round history and class leaderboards — an independent recreation of the card game, not affiliated with its publisher.",
+    "lead": "Every class gets the same twelve cards and the same six sets. What differs is who finds them first.",
+    "body": [
+      "Set Room gives every class the same twelve cards and exactly six sets each day. The Original mode keeps the board fixed as sets are found; Refill and Sprint instead replace matched cards and guarantee another set, allowing a repeated combination once it reappears — each a different way of racing the same underlying puzzle.",
+      "Classes join a shared league with a room code, and every match claim is verified and saved by the server rather than trusted from the client. The timer stops at the final valid set, and the official time is recorded against the New York puzzle date so classes across time zones are compared fairly. A sticky sidebar of found sets sits beside the board on desktop and below it on mobile, and the leaderboard tracks each class's best daily and all-time result.",
+      "An optional email/password account, built on Better Auth, lets a teacher save a room and reopen it on another device — email ownership isn't verified and there's no password recovery, which the README states plainly rather than glossing over. Full round history, including unfinished and ended rounds, exports to CSV in full.",
+      "Underneath, the SET rules themselves are a pure, dependency-free TypeScript module, server timestamps are authoritative for every match claim, and each new attempt gets its own private write token so simply viewing a room's history can't be used to authorize a change to it."
+    ],
+    "highlights": [
+      [
+        "Modes",
+        "Original (fixed board), Refill and Sprint (replace cards, guarantee a set)"
+      ],
+      [
+        "Backend",
+        "Next.js 16, Turso/libSQL, Better Auth email/password accounts"
+      ],
+      [
+        "Rule",
+        "Server-authoritative timestamps and a private write token per attempt"
+      ],
+      [
+        "Scope",
+        "Independent recreation of SET — not affiliated with its original publisher"
+      ]
+    ],
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rishikrrontala-bot/set-room"
+      }
+    ]
+  },
 
 ];
 
@@ -757,6 +1022,11 @@ export const worldFragments = [
   { kind: 'statement', text: 'A fabricated number that looks like a measurement is worse than a missing one.' },
   { kind: 'statement', text: 'The model can write the memo. It does not get to write the numbers.' },
   { kind: 'statement', text: 'Sound is omnidirectional and one-to-many for free.' },
+  { kind: 'statement', text: 'A piece used twice was never really unique.' },
+  { kind: 'statement', text: 'A board that compiles has not been measured yet.' },
+  { kind: 'statement', text: 'A shape-only match can pass while the real control still disagrees.' },
+  { kind: 'statement', text: 'A water balance has to say where every drop actually went.' },
+  { kind: 'statement', text: 'Same twelve cards, same six sets — only the order of finding them differs.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
