@@ -166,7 +166,12 @@ export default function WorldGrid() {
   return (
     <section id="world" className="relative bg-ink py-[clamp(72px,12vh,132px)] text-bone">
       <div className="gutter mb-[clamp(24px,5vh,52px)] flex flex-wrap items-end justify-between gap-6">
-        <Reveal as="h2" lines={['World']} className="t-display text-bone" />
+        <Reveal
+          as="h2"
+          lines={['World']}
+          className="t-display text-bone"
+          style={{ fontSize: 'clamp(44px, 8vw, 132px)' }}
+        />
         <p className="t-mono max-w-[34ch] text-bone/60">
           Work and the thinking around it, on one plane. Drag it.
         </p>

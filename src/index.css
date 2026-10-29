@@ -60,7 +60,10 @@
     font: inherit;
     color: inherit;
     background: none;
-    border: 0;
+    /* Width only: the border *shorthand* would also reset border-style to
+       none, and then a `border` utility (the outlined filter chips) draws
+       nothing at all. */
+    border-width: 0;
     padding: 0;
     cursor: pointer;
   }

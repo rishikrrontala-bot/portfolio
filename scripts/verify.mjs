@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { categories, projects } from '../src/data/site.js';
 const BASE = process.env.BASE || 'http://localhost:4173';
 const OUT = new URL('../shots/', import.meta.url).pathname;
 const fails = [];
@@ -6,6 +7,10 @@ const ok = (m) => console.log('  ✓', m);
 const bad = (m) => {
   fails.push(m);
   console.log('  ✗', m);
+};
+const check = (pass, good, fail) => {
+  if (pass) ok(good);
+  else bad(fail);
 };
 
 /* ── contrast maths (WCAG 2.2) ───────────────────────────────────────────── */
@@ -38,7 +43,11 @@ for (const [name, fg, bg, min] of pairs) {
 }
 
 /* ── runtime checks ──────────────────────────────────────────────────────── */
-const browser = await chromium.launch();
+// CHROMIUM_PATH lets this run against any local Chromium build when
+// Playwright's own browser download is unavailable.
+const browser = await chromium.launch(
+  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH, args: ['--no-sandbox'] } : {},
+);
 
 console.log('\n── reduced motion ──');
 {
@@ -57,13 +66,13 @@ console.log('\n── reduced motion ──');
     const pre = document.querySelector('[aria-label="Click & hold to enter the site"]');
     return !pre || !pre.offsetParent;
   });
-  gate ? ok('entry gate opens on a single click') : bad('entry gate still blocking');
+  check(gate, 'entry gate opens on a single click', 'entry gate still blocking');
 
   const hero = await page.locator('h1').first().boundingBox();
-  hero && hero.height > 50 ? ok('hero headline rendered') : bad('hero headline missing');
+  check(hero && hero.height > 50, 'hero headline rendered', 'hero headline missing');
 
   const cursorCount = await page.locator('div.fixed.z-\\[9999\\].rounded-full').count();
-  cursorCount === 0 ? ok('custom cursor disabled') : bad('custom cursor still active');
+  check(cursorCount === 0, 'custom cursor disabled', 'custom cursor still active');
 
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.waitForTimeout(900);
@@ -73,9 +82,9 @@ console.log('\n── reduced motion ──');
     const words = [...document.querySelectorAll('[data-mw]')];
     return words.length ? words.every((w) => parseFloat(getComputedStyle(w).opacity) > 0.9) : true;
   });
-  faded ? ok('scrubbed statement is fully legible (no faded words)') : bad('statement words stuck faded');
+  check(faded, 'scrubbed statement is fully legible (no faded words)', 'statement words stuck faded');
 
-  errs.length ? bad(`page errors: ${errs.join('; ')}`) : ok('no runtime errors');
+  check(errs.length === 0, 'no runtime errors', `page errors: ${errs.join('; ')}`);
   await page.close();
 }
 
@@ -103,7 +112,7 @@ console.log('\n── keyboard ──');
     const pre = document.querySelector('[aria-label="Click & hold to enter the site"]');
     return !pre || !pre.offsetParent;
   });
-  entered ? ok('site can be entered with the keyboard alone') : bad('keyboard cannot pass the gate');
+  check(entered, 'site can be entered with the keyboard alone', 'keyboard cannot pass the gate');
 
   const reach = [];
   for (let i = 0; i < 26; i += 1) {
@@ -122,11 +131,9 @@ console.log('\n── keyboard ──');
     );
   }
   const hits = reach.filter(Boolean);
-  hits.length >= 12 ? ok(`${hits.length} focusable stops reached`) : bad(`only ${hits.length} focus stops`);
+  check(hits.length >= 12, `${hits.length} focusable stops reached`, `only ${hits.length} focus stops`);
   const noRing = hits.filter((h) => !h.outline);
-  noRing.length === 0
-    ? ok('every focused element shows a visible focus ring')
-    : bad(`no focus ring on: ${noRing.map((h) => h.label).join(', ')}`);
+  check(noRing.length === 0, 'every focused element shows a visible focus ring', `no focus ring on: ${noRing.map((h) => h.label).join(', ')}`);
 
   await page.screenshot({ path: `${OUT}a11y-focus-ring.png` });
   await page.close();
@@ -163,21 +170,17 @@ console.log('\n── semantics & SEO ──');
     jsonld: !!document.querySelector('script[type="application/ld+json"]'),
   }));
 
-  doc.lang === 'en' ? ok('html lang set') : bad('missing html lang');
-  doc.title.length > 10 ? ok(`title: “${doc.title}”`) : bad('weak title');
-  doc.desc.length > 50 ? ok('meta description present') : bad('meta description missing/short');
-  doc.viewport ? ok('viewport meta present') : bad('viewport meta missing');
-  doc.h1.length === 1 ? ok(`exactly one h1: “${doc.h1[0]}”`) : bad(`h1 count = ${doc.h1.length}`);
+  check(doc.lang === 'en', 'html lang set', 'missing html lang');
+  check(doc.title.length > 10, `title: “${doc.title}”`, 'weak title');
+  check(doc.desc.length > 50, 'meta description present', 'meta description missing/short');
+  check(doc.viewport, 'viewport meta present', 'viewport meta missing');
+  check(doc.h1.length === 1, `exactly one h1: “${doc.h1[0]}”`, `h1 count = ${doc.h1.length}`);
   const jumps = doc.headings.filter((v, i) => i && v - doc.headings[i - 1] > 1);
-  jumps.length === 0 ? ok('no skipped heading levels') : bad(`heading level jumps: ${jumps.length}`);
-  doc.imgsNoAlt === 0 ? ok('no <img> without alt') : bad(`${doc.imgsNoAlt} images missing alt`);
-  doc.unlabelledButtons === 0
-    ? ok('every button has an accessible name')
-    : bad(`${doc.unlabelledButtons} buttons unlabelled`);
-  doc.landmarks.main >= 1 && doc.landmarks.footer >= 1
-    ? ok(`landmarks: ${JSON.stringify(doc.landmarks)}`)
-    : bad(`landmarks incomplete: ${JSON.stringify(doc.landmarks)}`);
-  doc.jsonld ? ok('structured data (JSON-LD) present') : bad('no JSON-LD');
+  check(jumps.length === 0, 'no skipped heading levels', `heading level jumps: ${jumps.length}`);
+  check(doc.imgsNoAlt === 0, 'no <img> without alt', `${doc.imgsNoAlt} images missing alt`);
+  check(doc.unlabelledButtons === 0, 'every button has an accessible name', `${doc.unlabelledButtons} buttons unlabelled`);
+  check(doc.landmarks.main >= 1 && doc.landmarks.footer >= 1, `landmarks: ${JSON.stringify(doc.landmarks)}`, `landmarks incomplete: ${JSON.stringify(doc.landmarks)}`);
+  check(doc.jsonld, 'structured data (JSON-LD) present', 'no JSON-LD');
 
   // No horizontal overflow at any breakpoint.
   for (const w of [375, 390, 768, 1024, 1440, 1920]) {
@@ -186,8 +189,74 @@ console.log('\n── semantics & SEO ──');
     const over = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
-    over <= 1 ? ok(`no horizontal overflow at ${w}px`) : bad(`overflow ${over}px at ${w}px`);
+    check(over <= 1, `no horizontal overflow at ${w}px`, `overflow ${over}px at ${w}px`);
   }
+  await page.close();
+}
+
+console.log('\n── work index: five categories ──');
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(e.message));
+  await page.goto(BASE, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(2500);
+  await page.locator('button[aria-label="Click & hold to enter the site"]').click();
+  await page.waitForTimeout(1200);
+
+  const work = page.locator('#work');
+  const chips = work.locator('button[aria-pressed]');
+  const labels = (await chips.allTextContents()).map((t) => t.trim());
+  const expected = ['All', ...categories];
+  check(
+    JSON.stringify(labels) === JSON.stringify(expected),
+    `filter chips are exactly: ${labels.join(' · ')}`,
+    `filter chips are ${labels.join(' · ')} — expected ${expected.join(' · ')}`,
+  );
+
+  const tiles = () => work.locator('ul.grid > li').count();
+  check((await tiles()) === projects.length, `All shows ${projects.length} projects`, `All shows ${await tiles()}`);
+
+  for (const c of categories) {
+    await work.getByRole('button', { name: c, exact: true }).click();
+    await page.waitForTimeout(250);
+    const want = projects.filter((p) => p.category === c).length;
+    const got = await tiles();
+    const pressed = await work.getByRole('button', { name: c, exact: true }).getAttribute('aria-pressed');
+    check(got === want && pressed === 'true', `“${c}” shows its ${want} projects`, `“${c}” shows ${got}, expected ${want} (pressed=${pressed})`);
+  }
+  await work.getByRole('button', { name: 'All', exact: true }).click();
+
+  // A card shows only its primary links; the project page shows all of them.
+  const multi = projects.find((p) => p.links.some((l) => l.secondary));
+  if (multi) {
+    const card = work.locator('ul.grid > li').nth(projects.indexOf(multi));
+    const cardLinks = await card.locator('a[target="_blank"]').count();
+    const primary = multi.links.filter((l) => !l.secondary).length;
+    check(cardLinks === primary, `${multi.title} card shows ${primary} primary links`, `${multi.title} card shows ${cardLinks} links, expected ${primary}`);
+
+    await page.goto(`${BASE}#/work/${multi.slug}`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1500);
+    const pageLinks = await page.locator('article a[target="_blank"]').count();
+    check(pageLinks === multi.links.length, `${multi.title} page lists all ${multi.links.length} links`, `${multi.title} page lists ${pageLinks} links`);
+
+    // Its category chip leads back to the index, filtered to that category.
+    await page.getByRole('button', { name: `More ${multi.category} projects` }).click();
+    await page.waitForTimeout(1800);
+    const active = await page.locator('#work button[aria-pressed="true"]').textContent();
+    check(active?.trim() === multi.category, `category chip returns to “${multi.category}”, pre-filtered`, `category chip returned to “${active}”`);
+  }
+
+  // Overflow with the chip row at phone width, where it has to wrap.
+  await page.goto(BASE, { waitUntil: 'networkidle' });
+  for (const w of [320, 375]) {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.waitForTimeout(500);
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    check(over <= 1, `chips wrap cleanly at ${w}px`, `overflow ${over}px at ${w}px`);
+  }
+
+  check(errs.length === 0, 'no runtime errors across index, filter and project page', `page errors: ${errs.join('; ')}`);
   await page.close();
 }
 

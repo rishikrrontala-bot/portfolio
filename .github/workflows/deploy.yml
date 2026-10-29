@@ -33,6 +33,10 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
+      # Content checks on src/data/site.js — a malformed project entry fails
+      # here instead of reaching the live site.
+      - run: npm test
+
       - run: npm run build
 
       - uses: actions/configure-pages@v5

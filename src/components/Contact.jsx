@@ -45,6 +45,7 @@ export default function Contact() {
           as="h2"
           lines={['Tell me what', 'you are actually', 'trying to solve.']}
           className="t-display text-bone"
+          style={{ fontSize: 'clamp(38px, 7.5vw, 128px)' }}
           stagger={0.05}
         />
 

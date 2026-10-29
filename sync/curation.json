@@ -1,0 +1,22 @@
+{
+  "reviewed": "2026-10-28",
+  "policy": "Every public repo in sync/github.json is either linked from a project in src/data/site.js or listed under `excluded` with the reason. `npm test` reports any repo that is neither. A placeholder leaves this list when its README documents a working build.",
+  "excluded": {
+    "luma-hackathon-fall": "Muslin. The comparison flow works on sample data, but the photo-measurement pipeline is not wired into the app yet.",
+    "305hackshellssep2026": "Placeholder: a draft brief, nothing built yet.",
+    "acodemic-hackathon": "Placeholder: a draft brief, nothing built yet.",
+    "creatorcolosseumshowdown": "Placeholder: a draft brief, nothing built yet.",
+    "csc-back-to-school": "Placeholder: a draft brief, nothing built yet.",
+    "dsh-hacks-v2": "Placeholder: a draft brief, nothing built yet (deadline Nov 8, 2026).",
+    "firstcommit": "Placeholder: a draft brief, nothing built yet.",
+    "innovart2027": "Placeholder: a draft brief, nothing built yet (deadline Jan 2, 2027).",
+    "ml-build-challenge-3": "Placeholder: the ML Empowerment entry, Withheld, lives in gibc-v2.",
+    "next-founders": "Placeholder: the Next Founders entry, Patchline Lab, lives in patchline-lab.",
+    "practicetocreate": "Placeholder: a draft brief, nothing built yet.",
+    "univabio": "Placeholder: the UnivaBio entry, Patchline, lives in patchline."
+  },
+  "privateLiveOnly": {
+    "elsewhen": "Private repository. Linked by its live app and demo video only.",
+    "stillwarm": "Private repository. Linked by its live app only."
+  }
+}

@@ -1,22 +1,51 @@
 import { useMemo } from 'react';
 import anxietyCover from '../assets/work/anxiety-guide.jpg';
 import baselineCover from '../assets/work/baseline.jpg';
+import earshotCover from '../assets/work/earshot.jpg';
+import elsewhenCover from '../assets/work/elsewhen.jpg';
 import explainCover from '../assets/work/explain-it-back.jpg';
 import habitatCover from '../assets/work/habitat-pulse.jpg';
 import hooklineCover from '../assets/work/hookline.jpg';
+import inItsPlaceCover from '../assets/work/in-its-place.jpg';
+import leaseleakCover from '../assets/work/leaseleak.jpg';
 import loopRoomCover from '../assets/work/loop-room.jpg';
+import offcutCover from '../assets/work/offcut.jpg';
+import patchlineCover from '../assets/work/patchline.jpg';
+import returnlineCover from '../assets/work/returnline.jpg';
+import runofflabCover from '../assets/work/runofflab.jpg';
+import scentShelfCover from '../assets/work/scent-shelf.jpg';
+import setRoomCover from '../assets/work/set-room.jpg';
+import sightlineCover from '../assets/work/sightline.jpg';
+import stillwarmCover from '../assets/work/stillwarm.jpg';
+import submitlineCover from '../assets/work/submitline.jpg';
+import withheldCover from '../assets/work/withheld.jpg';
 
-/* The landing screen of each project, cropped to one 8:5 card shape — the
-   first thing a visitor to that project would actually see. Only the project
-   page uses these; a project with nothing to point at (emotion-engine, a C++
-   terminal program) has no entry and falls through to the plate below. */
+/* A screen from each project, 1600×1000 (8:5) — the first thing a visitor to
+   that project would actually see. Only the project page uses these; a
+   project without one falls through to the generated plate below. Sample
+   data in a screenshot is only ever data the app itself labels as such.
+   `npm test` checks every key here is a real slug with a file behind it. */
 const covers = {
-  'explain-it-back': explainCover,
-  'habitat-pulse': habitatCover,
+  elsewhen: elsewhenCover,
+  runofflab: runofflabCover,
+  patchline: patchlineCover,
+  'set-room': setRoomCover,
+  offcut: offcutCover,
+  returnline: returnlineCover,
+  submitline: submitlineCover,
+  withheld: withheldCover,
+  sightline: sightlineCover,
+  'in-its-place': inItsPlaceCover,
+  stillwarm: stillwarmCover,
+  'scent-shelf': scentShelfCover,
   'anxiety-guide': anxietyCover,
-  baseline: baselineCover,
+  earshot: earshotCover,
+  leaseleak: leaseleakCover,
+  'habitat-pulse': habitatCover,
   hookline: hooklineCover,
   'loop-room': loopRoomCover,
+  baseline: baselineCover,
+  'explain-it-back': explainCover,
 };
 
 /* Deterministic pseudo-random from a string, so a project's artwork is stable

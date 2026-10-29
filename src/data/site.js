@@ -1,8 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  THE ONLY FILE YOU NEED TO EDIT.
 //  Everything the site says lives here. Change a string, the site changes.
-//  Add an object to `projects` and it appears in the index, the drag-grid,
-//  the counter and gets its own page automatically.
+//  Add an object to `work` and it appears in the index, the drag-grid, the
+//  counter and its category filter, and gets its own page automatically.
+//  `npm test` checks every entry before it can ship.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const identity = {
@@ -68,85 +69,369 @@ export const capabilities = [
   'Interface design',
 ];
 
-// `links` is optional. When present it is a list of { label, href } and is
-// rendered on both the work-index card and the project page. Projects with
-// nothing public to point at simply omit it.
-export const projects = [
+// ── Work ────────────────────────────────────────────────────────────────────
+//
+// Five categories, fixed. They are the filter chips on the work index, so the
+// list stays this short on purpose: every project picks exactly ONE. If a new
+// project seems to need a sixth, it belongs in the closest of these five.
+export const categories = ['AI & ML', 'Health & Science', 'Education', 'Tools', 'Interactive'];
+
+// One object per project. Order here does not matter — `projects` below sorts
+// newest first by `date` (YYYY-MM-DD, when it was finished or submitted) and
+// numbers them, so `index` and `year` are never written by hand.
+//
+// `links` is a list of { label, href } — at least one. A link marked
+// `secondary: true` appears only on the project page, not on the index card —
+// for projects with more than one demo or repository.
+const work = [
   {
-    slug: 'explain-it-back',
-    index: '01',
-    title: 'Explain It Back',
-    titleLines: ['Explain', 'It Back'],
-    kicker: 'Study tool · Solo build',
-    year: '2026',
-    role: 'Solo — concept, engine, guard, evaluation, demo film',
+    slug: 'elsewhen',
+    title: 'Elsewhen',
+    titleLines: ['Else', 'when'],
+    kicker: 'Congressional App Challenge · Solo entry',
+    date: '2026-10-26',
+    role: 'Solo entry — concept, product direction and decisions, built with AI coding assistants',
     status: 'Submitted',
-    tags: ['AI/ML', 'Education', 'Hackathon'],
-    hue: 222,
-    summary:
-      'A study tool built on one rule: it never explains anything. You explain the concept; it finds the holes in what you actually understand and asks you one hard question.',
-    lead: 'Reading your notes feels like understanding. The feeling is the problem.',
+    category: 'Interactive',
+    hue: 298,
+    summary: 'Stand somewhere, pick a year, and look around it then. A heritage app built around 360° scenes, real archival photographs and short stories in which every sentence is cited.',
+    lead: 'Almost everyone takes a photo of the landmark and leaves. Almost nobody asks what stood there before.',
     body: [
-      'Rozenblit and Keil called it the illusion of explanatory depth: people rate their grasp of an everyday mechanism high, then rate it far lower the moment they are made to write out how it actually works. Every study method built on recognition leaves the illusion intact — and an AI that explains a concept beautifully is the strongest recognition hit of all. You read something fluent, it makes sense, and you file that feeling as knowledge.',
-      'What reliably works is generation: producing the explanation yourself, from memory, and finding out where you run out. Almost nobody does it, because it needs a listener knowledgeable enough to catch you and disciplined enough not to rescue you. Explain It Back is that listener. You name a concept, explain it cold, and it diagnoses the shape of what you said — six specific ways a mental model bends, quoted back in your own words — then asks one Socratic question aimed at the biggest structural gap. When it catches you using a term as a substitute for the idea, that term is banned from your next attempt and the ban is enforced.',
-      'The single promise the product makes could not rest on a system prompt, because instructions to a language model are followed most of the time and most is not a guarantee. So the rule is enforced in three independent layers: the prompt, a mechanical scan that deletes answer-asserting sentences before the learner ever sees them, and a badge in the interface so you can watch the tool police itself. Red-teaming the first version showed seven of nine adversarial probes walking straight through — a model hands over the answer just as completely in a teacherly register as in a correction — so two more detection layers went in.',
-      'The last decision was to measure it rather than assert it. The guard corpus scores 97.6% F1 across 39 leak cases at 100% precision, on top of 193 unit tests and 71 browser checks that drive the built file exactly as a judge would, including a full WCAG 2.2 AA pass computed from rendered pixels. Runs against a live model are published as a range — F1 81.3, 84.8, 88.2 across three runs on the same 16 cases — because the range is the honest number and any single one of them would be a choice about which run to show.',
+      'I flew to Dallas and stood in a park full of cattle-drive sculptures, and almost everyone around me took a photo and left. Then I realised I did the same thing at home: I did not know the history of where I live in New Jersey. Elsewhen is my attempt to make local heritage something you can stand inside rather than something you have to go looking for. It opens on Nassau Hall in 1783; you can jump to 1903, drag a lens across the scene to compare, tap a numbered marker for its story, and open the actual archive image the scene was built from.',
+      'Scanning a new place uses the phone itself. Turn in a circle and it captures a frame each time the compass lines up with the next target, every 30°, then stitches them into a panorama on the device, with headings corrected to true north using the 2025 World Magnetic Model. Choose a year, and it researches the location across Wikipedia and Wikidata, OpenStreetMap, Wikimedia Commons and the Library of Congress\'s historic newspapers, deciding for each building whether it had been built yet, was still standing, or was already gone.',
+      'The rule for stories is that they are built from real sentences in their sources, and a story that fails a mechanical check is thrown out: every citation has to point at a real source, every number has to appear in the cited text, and no date or phrase like "would later become" can leak in from after the chosen year. A scene is only reconstructed when a real, dated archival image from no later than that year exists; that image becomes the reference for editing your own panorama with an open image model that runs locally on a Mac, at no per-image cost. Every reconstruction is labelled as an interpretation with its source beside it — and the Old Barracks in 1936 is not one at all: it is a real Library of Congress survey photograph, only cropped and resized, and the app says so.',
+      'Location is rounded to about a kilometre before a nearby search and is never stored. Publishing a visit strips photo metadata and rounds the public location, and the owner can unpublish it later. The release passed 464 unit and integration tests and 64 browser checks, and was submitted to the 2026 Congressional App Challenge.',
     ],
     highlights: [
-      ['Event', 'Prometheus August AI Challenge — solo entry'],
-      ['Rule', 'It never explains. Enforced in code, not only in the prompt'],
-      ['Guard', '97.6% F1 over 39 leak cases, at 100% precision'],
-      ['Hard part', 'Making a promise a language model cannot break'],
+      ['Event', 'Congressional App Challenge 2026 — submitted October 26'],
+      ['Stack', 'React, TypeScript, three.js, Node, MongoDB; FLUX.2 Klein run locally'],
+      ['Rule', 'A story citing a number its source does not contain is discarded'],
+      ['Hard part', 'Labelling every reconstruction as an interpretation, with its archive source beside it'],
     ],
     links: [
-      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/explain-it-back/' },
-      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' },
+      { label: 'Live app', href: 'https://elsewhen-iota.vercel.app' },
+      { label: 'Demo video', href: 'https://youtu.be/DSXnmuaCh9c' },
     ],
   },
   {
-    slug: 'habitat-pulse',
-    index: '02',
-    title: 'Habitat Pulse',
-    titleLines: ['Habitat', 'Pulse'],
-    kicker: 'Hack the Habitat · Live data',
-    year: '2026',
-    role: 'Concept, build — data plumbing, motion, accessibility',
+    slug: 'runofflab',
+    title: 'RunoffLab',
+    titleLines: ['Runoff', 'Lab'],
+    kicker: 'Stormwater simulation · Fine-tuned planner',
+    date: '2026-10-19',
+    role: 'Concept, requirements, data sources and direction — AI assistants wrote the code',
     status: 'Shipped',
-    tags: ['Live data', 'Climate', 'Hackathon'],
-    hue: 171,
-    summary:
-      'Search any place on Earth for its live air quality, current weather and the threatened species recorded nearby — pulled straight from public APIs, behind a hero that expands as you scroll.',
-    lead: 'Somewhere, right now, there is a number for this place. The work is making it mean something.',
+    category: 'Health & Science',
+    hue: 249,
+    summary: 'Run a hypothetical storm over real New Jersey LiDAR terrain, place rain gardens, and rerun the same storm to compare the ponding — with a water balance that accounts for every destination the water can reach.',
+    lead: 'A rain garden either holds the water it claims to, or it does not. The model has to say where every drop went.',
     body: [
-      'The Hack the Habitat brief was "build tech that protects the planet", which is the kind of prompt that invites a project to tell you what to feel. This one only tells you what is true where you are standing: the live US air quality index with a plain-language health read and a best-effort call on which pollutant is driving it, the current temperature, humidity, wind and today\'s range, and the threatened species recorded within fifty kilometres — sorted by IUCN Red List severity, each one linking back to its GBIF record.',
-      'The rule underneath it was simple and load-bearing: if a number is not real, it does not appear. There is no account, no API key and no backend — every fetch is a direct client-side call to free public data from Open-Meteo and GBIF, and the actions it suggests are tied to what was actually found rather than to generic environmentalism.',
-      'The hero is scroll-driven — a photograph that grows to fill the screen before the tool underneath it appears — which turns motion preference from a nicety into a correctness problem. Reduced-motion visitors get the hero mounted fully expanded with the scrub never attached, so the page scrolls normally. A deep link also mounts expanded, so a shared result is visible immediately, but keeps the scrub, because following a link says nothing about how someone feels about motion. Two separate tested predicates, not one flag.',
-      'The bug worth keeping is in the species query. GBIF\'s Red List category filter silently matches zero records if the categories are comma-joined into one value; it needs repeated query parameters. It passed every test written against the documented example responses and only surfaced by calling the real endpoint — so the fix ships with a regression test pinning the shape of the URL, not just the result.',
+      'RunoffLab runs a storm over public LiDAR terrain at Mercer County Park, New Jersey: a 384-metre domain at 4-metre cells, with a lake sink, masked buildings, lawn and pavement classified from aerial imagery, and 25 candidate sites for rain gardens. Run a baseline, place gardens, then repeat exactly the same storm and scrub both histories side by side at the same simulated second. The water balance tracks rainfall, surface water, soil, garden storage, edge outflow and drainage into the lake, so a design is judged on where the water actually went rather than on one number.',
+      'The solver is a local inertial shallow-water model with an independently implemented diffusive-wave reference to check it against, and it runs in a Web Worker so the computation stays independent of the rendering. Gardens are bermed basins with finite storage and infiltration; the ground elevation itself is never reshaped.',
+      'The project also asks whether a language model can learn to place gardens well. A 4-billion-parameter model was fine-tuned on 4,000 simulator-labelled cases from 25 terrain families, with whole families held out for testing and the Mercer site excluded. A greedy simulator search captured 99.3% of the best-known improvement; the trained model alone captured 61.8%, against 56.7% for a simple downhill rule. That advantage is not statistically significant, and on the real site the model scored below the rule. Both results are published next to the ones that look better. The model only ever picks garden IDs; every design it proposes is simulated before any effect is shown.',
+      'It is an educational experiment with stated assumptions, not a flood forecast or an engineering design, and there is no field calibration. The public site uses recorded model answers and simulates each of them live in the browser.',
     ],
     highlights: [
-      ['Event', 'Hack the Habitat 2026'],
-      ['Stack', 'Next.js 16, React 19, TypeScript, Tailwind v4'],
-      ['Rule', 'If a number is not real, it does not appear'],
-      ['Took away', 'A filter that returns zero is worse than one that errors'],
+      ['Terrain', 'Public NJ LiDAR, Mercer County Park — 384 m domain at 4 m cells'],
+      ['Model', '4B model fine-tuned on 4,000 simulator-labelled cases'],
+      ['Result', 'Published even where the trained model lost to a simple rule'],
+      ['Boundary', 'An experiment with stated assumptions, not a flood forecast'],
     ],
     links: [
-      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/habitat-pulse-hero/' },
-      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/habitat-pulse-hero' },
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/runofflab/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/runofflab' },
+    ],
+  },
+  {
+    slug: 'patchline',
+    title: 'Patchline',
+    titleLines: ['Patch', 'line'],
+    kicker: 'Smart-bandage research · Three builds',
+    date: '2026-10-16',
+    role: 'Solo — concept, simulator, classifier, research workbench, hardware draft, verification',
+    status: 'Completed prototype',
+    category: 'Health & Science',
+    hue: 345,
+    summary: 'One smart-bandage idea built three ways: a digital twin with a trained classifier, a workbench for real sensor recordings, and a bench prototype with its own PCB draft and firmware. Each one holds when a signal cannot be trusted.',
+    lead: 'Before a system reacts to a signal, it has to decide whether the signal can be trusted.',
+    body: [
+      'Patchline started with an idea for a patch that monitors the signals around a diabetic wound. Building that responsibly starts with a smaller question — what the sensors actually measure, and when the system should refuse to act — so it became three separate builds, each in its own repository so the earlier editions stay exactly as they were built.',
+      'The first, for UnivaBio 2026, is a working digital twin: four reproducible wound-environment channels, a small classifier trained on separate synthetic traces, and an orchestrator that combines model scores with sensor-quality checks into an evidence-linked handoff. Stable, changing-pattern and sensor-fault scenarios make the link between reading, model output and review visible, and a faulty sensor holds every simulated action.',
+      'Patchline Lab, a separate Next Founders edition, is a workbench for recordings people actually made. Import a CSV, confirm the columns and units, and compare it against a reference or repeat run: with difference d, uncertainty u and tolerance t, a sample is within when d + u ≤ t, exceeds when d − u > t, and is uncertain otherwise. Every finding links to its exact sample and the rule that flagged it. It ships 5,000 credited environmental temperature readings from a public UCI dataset, unchanged and with all 76 sampling gaps left visible.',
+      'Patchline Bench moves toward hardware. Its classifier was trained from scratch on 1,200 simulated runs, selected on 300 and tested on 300 more: 89.7% accuracy, 89.4% macro F1, and 31 of 100 injected sensor faults missed — reported as exactly that, not as evidence of detecting anything clinical. A Python tool drafts the passive PCB and netlist with connectivity checks, and two firmware modes compile for an ESP32 and pass host-side tests that include I²C failures. Real hardware measurements are still pending, and no edition gives a diagnosis, a dose or a device command.',
+    ],
+    highlights: [
+      ['Builds', 'Simulator (UnivaBio 2026) · Lab (Next Founders) · Bench'],
+      ['Model', '89.7% accuracy on held-out synthetic runs, every miss reported'],
+      ['Hardware', 'PCB draft and ESP32 firmware compile; bench measurements pending'],
+      ['Boundary', 'Synthetic and research data only — no diagnosis, dose or device control'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://patchline-bench.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/patchline-bench' },
+      { label: 'Lab demo', href: 'https://patchline-lab.vercel.app', secondary: true },
+      { label: 'Lab source', href: 'https://github.com/rishikrrontala-bot/patchline-lab', secondary: true },
+      { label: 'Simulator demo', href: 'https://rishikrrontala-bot.github.io/patchline/', secondary: true },
+      { label: 'Simulator source', href: 'https://github.com/rishikrrontala-bot/patchline', secondary: true },
+    ],
+  },
+  {
+    slug: 'set-room',
+    title: 'Set Room',
+    titleLines: ['Set', 'Room'],
+    kicker: 'Classroom game · Full-stack build',
+    date: '2026-10-15',
+    role: 'Concept and build — game rules, server-verified scoring, accounts and leaderboards',
+    status: 'Shipped',
+    category: 'Education',
+    hue: 157,
+    summary: 'A classroom SET race: every class gets the same twelve cards with exactly six sets, the server verifies and times every match, and a leaderboard settles which class found them fastest.',
+    lead: 'Every class gets the same twelve cards and the same six sets. The only thing that differs is who sees them first.',
+    body: [
+      'A teacher creates a league, types in the class names, and shares a room code with the other screens in the room. In the default Original mode the twelve cards stay put and the class has to find all six distinct sets on that one board; cards can belong to more than one set, and finding the same triple twice does not count. Refill and Sprint replace matched cards instead and guarantee another set on the table.',
+      'The clock that counts is the server\'s. Each match claim is validated against the current board, advances the round atomically and is safe to retry, and the official time is recorded when the final valid set arrives, against the puzzle date in New York. Every attempt gets its own private write token, so being able to view a room\'s history never means being able to change it.',
+      'Teachers can save rooms to an account and reopen them on another device. Every round, including ended and unfinished ones, stays in the history and exports to CSV, and Practice mode gives hints without ever saving a ranked score. The generator is tested to deal boards with exactly six sets.',
+      'The limits are written down rather than hidden: it is a supervised classroom activity, not a proctored exam, email addresses are not verified and there is no password recovery. It is an independent recreation of SET and is not affiliated with its publisher.',
+    ],
+    highlights: [
+      ['Stack', 'Next.js 16, React 19, Turso/libSQL, Better Auth'],
+      ['Rule', 'Server timestamps are the official time; the on-screen timer is a preview'],
+      ['Modes', 'Original fixed board, plus Refill and Sprint'],
+      ['Boundary', 'A supervised classroom activity, not a proctored exam'],
+    ],
+    links: [
+      { label: 'Live app', href: 'https://set-room.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/set-room' },
+    ],
+  },
+  {
+    slug: 'offcut',
+    title: 'Offcut',
+    titleLines: ['Offcut'],
+    kicker: 'Banana Hacks 2026 · Solo build',
+    date: '2026-10-11',
+    role: 'Solo — concept, vision pipeline, allocation, print plans, verification',
+    status: 'Submitted',
+    category: 'Interactive',
+    hue: 82,
+    summary: 'Photograph your leftover paper scraps and get back a collage you can actually make: every square is a real crop of paper you own, used once, with a printable actual-size cutting plan.',
+    lead: 'Every square in the collage is paper that actually exists. Nothing is recoloured, and nothing is used twice.',
+    body: [
+      'Photograph four to eight flat paper scraps on an A4 sheet and Offcut turns them into a finite inventory of material, a collage built only from original crops of that photograph, and numbered, actual-size plans for cutting and assembling it. The point is the constraint: the app never recolours or duplicates a source piece, so a square of paper either exists or it does not.',
+      'Everything runs in the browser. OpenCV straightens the sheet from its four corners, and a pretrained SlimSAM model running locally proposes a mask for each scrap, with brush, erase, zoom and undo to fix the boundaries before anything is confirmed. Photographs never leave the device.',
+      'Matching is a Hungarian assignment that minimises colour distance in CIELAB space, and every source square can be used at most once. If there is not enough of a colour, the collage is blocked with an honest shortage instead of quietly cheating. Click any square to see exactly where it came from in the original photo; exclude a paper and the whole plan recomputes. The exported plan prints at 100% with a 20 mm calibration square to measure before cutting.',
+      'It passed 59 unit tests and nine browser checks, both locally and against the deployed build, and was submitted to Banana Hacks. The README is direct about what is not proven yet: no real camera photographs have been evaluated, and no physical assembly has been verified.',
+    ],
+    highlights: [
+      ['Event', 'Banana Hacks 2026 — submitted on Devpost'],
+      ['Method', 'OpenCV rectification, local SlimSAM masks, Hungarian assignment in CIELAB'],
+      ['Rule', 'A shortage blocks the collage instead of reusing or recolouring a piece'],
+      ['Boundary', 'Tested on illustrated input; real-photo results still unverified'],
+    ],
+    links: [
+      { label: 'Live app', href: 'https://offcut-six.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/offcut' },
+    ],
+  },
+  {
+    slug: 'returnline',
+    title: 'Returnline',
+    titleLines: ['Return', 'line'],
+    kicker: 'ImpactHack 2026 · Solo build',
+    date: '2026-10-06',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Shipped',
+    category: 'Education',
+    hue: 225,
+    summary: 'Turn class notices after an absence into source-linked tasks, questions and a two-day catch-up plan that respects the time available.',
+    lead: 'Missing a day should not mean losing the thread.',
+    body: [
+      'Returnline accepts up to five class notices. Gemini proposes tasks, dates and missing materials; the server rejects quotations absent from the pasted source and only parses supported date phrases within verified quotes. The student can review, edit or remove every item.',
+      'A deterministic planner puts prerequisite questions ahead of blocked work, orders deadlines and exposes capacity shortfalls. The printable brief and copyable questions support the next conversation without messaging teachers. The fictional example is labeled, and live analysis sends the pasted notice text to Gemini.',
+    ],
+    highlights: [
+      ['Event', 'ImpactHack 2026'],
+      ['Stack', 'Next.js, TypeScript, Gemini and browser storage'],
+      ['Core', 'Exact-source checks followed by deterministic planning'],
+      ['Boundary', 'Quoted evidence still needs interpretation and student review'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://returnline.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/returnline' },
+    ],
+  },
+  {
+    slug: 'submitline',
+    title: 'Submitline',
+    titleLines: ['Submit', 'line'],
+    kicker: 'LovHack Season 3 · Solo build',
+    date: '2026-10-04',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Submitted',
+    category: 'Tools',
+    hue: 190,
+    summary: 'A submission preflight that turns rules and draft links into an evidence board: verified, blocked or needing human review.',
+    lead: 'A finished build only counts if a judge can reach the evidence.',
+    body: [
+      'Submitline pairs editable submission requirements with unauthenticated link checks, public GitHub visibility and YouTube metadata. Each requirement keeps its own evidence and status. An available page does not automatically count as a playable video, and unavailable duration evidence stays a human-review item.',
+      'Optional deAPI video analysis adds labeled visual observations with timeline links. Server-side address checks reject private destinations and revalidate redirects. Drafts stay in browser storage and can be exported as Markdown. The tool helps review a submission; it does not promise eligibility or submit on the entrant’s behalf.',
+    ],
+    highlights: [
+      ['Event', 'LovHack Season 3 — submitted October 4, 2026'],
+      ['Stack', 'Next.js, TypeScript and server-side link checks'],
+      ['Evidence', 'Public repository checks, video metadata and optional deAPI observations'],
+      ['Rule', 'Separate verified, blocked and human-review states; no readiness score'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://submitline.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/submitline' },
+    ],
+  },
+  {
+    slug: 'withheld',
+    title: 'Withheld',
+    titleLines: ['Withheld'],
+    kicker: 'ML Empowerment · Solo build',
+    date: '2026-10-02',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Submitted',
+    category: 'AI & ML',
+    hue: 48,
+    summary: 'A College Scorecard explorer that separates official earnings from supported model estimates, shows uncertainty, and leaves unsupported outcomes unknown.',
+    lead: 'The missing value is part of the information. Keep it visible.',
+    body: [
+      'Withheld explores program-level college outcomes without pretending that suppressed earnings are known. Visitors can search institutions, inspect provenance, compare programs and export labeled records. Supported model estimates appear with intervals; programs with too little comparable evidence receive an abstention.',
+      'A frozen LightGBM pipeline separates training, calibration and testing by institution family. The browser consumes precomputed predictions and published validation evidence. The interval coverage falls short of its target, and validation on published outcomes cannot establish accuracy on the genuinely suppressed records. Those limits appear alongside the result.',
+    ],
+    highlights: [
+      ['Event', 'Submitted to ML Empowerment Build Challenge 3.0'],
+      ['Data', 'U.S. Department of Education College Scorecard'],
+      ['Model', 'LightGBM quantiles with separate calibration and held-out testing'],
+      ['Boundary', 'Research prototype; suppressed values remain unknown'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/gibc-v2/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/gibc-v2' },
+    ],
+  },
+  {
+    slug: 'sightline',
+    title: 'Sightline',
+    titleLines: ['Sightline'],
+    kicker: 'Next Byte Hacks V4 · Solo build',
+    date: '2026-09-30',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Shipped',
+    category: 'Education',
+    hue: 143,
+    summary: 'Move a parked van or change approach speed at a simulated school crossing, and see the available view compared with calculated stopping distance.',
+    lead: 'A painted crossing cannot show you what a parked vehicle hides.',
+    body: [
+      'Sightline links an interactive crossing scene to a pure geometry and physics model. Changing the van’s setback or the driver’s speed updates the visible approach distance, the stopping-distance calculation and the measured trace together.',
+      'The same model drives a 3D scene and a diagram fallback. Scenarios can be shared by URL, and the assumptions remain visible beside the result. It is an educational simulation with no field validation; a positive modeled margin does not certify a real crossing safe.',
+    ],
+    highlights: [
+      ['Event', 'Next Byte Hacks: V4'],
+      ['Stack', 'React, TypeScript, React Three Fiber and Vite'],
+      ['Model', 'Line-of-sight geometry plus reaction and braking distance'],
+      ['Boundary', 'Illustrative crossing, fixed assumptions, no safety certification'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/next-byte-hacks-v4/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/next-byte-hacks-v4' },
+    ],
+  },
+  {
+    slug: 'in-its-place',
+    title: 'In Its Place',
+    titleLines: ['In Its', 'Place'],
+    kicker: 'LexHack 2026 · Solo build',
+    date: '2026-09-27',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Completed prototype',
+    category: 'Tools',
+    hue: 210,
+    summary: 'A deterministic proof desk that applies a D.C. bill’s edit instructions to a historical Code section, with every change traced to its source sentence.',
+    lead: 'Read the law a bill would make, alongside the words that changed it.',
+    body: [
+      'Bills often describe edits without showing the resulting statute. In Its Place makes that step inspectable: it parses twelve instructions from D.C. Law 25-108, applies them to a historical snapshot of D.C. Code § 38-501, and pairs each change with the instruction that caused it.',
+      'The compiler runs without a language model, server or API key. If a quoted target is absent, it raises a query instead of inventing an edit. This is a one-section prototype, and its replay is compared openly with the Council’s later codification, including the differences it cannot reproduce.',
+    ],
+    highlights: [
+      ['Event', 'LexHack 2026'],
+      ['Core', 'TypeScript instruction parser, target resolver and edit applier'],
+      ['Evidence', 'Checked-in D.C. Council XML snapshots'],
+      ['Scope', 'One Code section; queries on unsupported edits'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/lexhack-2026/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/lexhack-2026' },
+    ],
+  },
+  {
+    slug: 'stillwarm',
+    title: 'Stillwarm',
+    titleLines: ['Still', 'warm'],
+    kicker: 'Remodeler tooling · Solo build',
+    date: '2026-09-26',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Shipped',
+    category: 'Tools',
+    hue: 304,
+    summary: 'A live estimate-follow-up site and operator workspace for residential remodelers, turning open estimates into a dated follow-up queue.',
+    lead: 'The estimate was sent. The next conversation still needs an owner.',
+    body: [
+      'Stillwarm combines a public service site, an illustrative recovery calculator and a working waitlist with a practical operator workspace. Import an estimate CSV, build a dated follow-up queue, and export it for the person managing the work.',
+      'Customer estimate files are parsed in the browser rather than uploaded. The public waitlist uses a validated server route and an n8n data table to keep signups persistent and deduplicated. The product supports a managed service; it does not claim to close sales or autonomously send follow-ups.',
+    ],
+    highlights: [
+      ['Product', 'Public site, recovery calculator, waitlist and operator workspace'],
+      ['Privacy', 'Estimate CSV processing stays in the browser'],
+      ['Backend', 'Validated waitlist route with persistent n8n storage'],
+      ['Boundary', 'Follow-up execution remains a human-operated service'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://stillwarm-opal.vercel.app' },
+    ],
+  },
+  {
+    slug: 'scent-shelf',
+    title: 'Scent Shelf',
+    titleLines: ['Scent', 'Shelf'],
+    kicker: 'Collection tool · Solo build',
+    date: '2026-09-23',
+    role: 'Solo — concept, implementation, interface and verification',
+    status: 'Shipped',
+    category: 'Tools',
+    hue: 34,
+    summary: 'A perfume collection, wishlist and formula notebook in one browser app — track what is left in each bottle, record wears, and version your own blends.',
+    lead: 'A collection is more useful when you remember what you actually wear.',
+    body: [
+      'Scent Shelf brings a shelf, wishlist and homemade blends into one small app. Bottle cards show how much remains; search, scent-family filters and sorting make the collection usable as it grows. Each fragrance holds its notes, season, rating and wear history.',
+      'The blend notebook accepts drops, millilitres or grams and calculates each ingredient’s share. Formula versions, resting times and ingredient notes keep an experiment reproducible. The collection stays in browser storage on that device; optional perfume lookup goes through a server function with its Gemini key kept off the page.',
+    ],
+    highlights: [
+      ['Format', 'Single HTML app with browser-local collection storage'],
+      ['Tools', 'Wear log, note pyramids, wishlist and versioned blend formulas'],
+      ['AI', 'Optional server-side perfume lookup'],
+      ['Boundary', 'Browser storage does not sync your collection between devices'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://scent-shelf-tau.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/scent-shelf' },
     ],
   },
   {
     slug: 'anxiety-guide',
-    index: '03',
     title: 'Breathing Room',
     titleLines: ['Breathing', 'Room'],
     kicker: 'Writing · A guide for teens',
-    year: '2026',
+    date: '2026-09-20',
     role: 'Solo — writing, structure, build',
     status: 'Published',
-    tags: ['Writing', 'Mental health', 'Web'],
-    hue: 120,
-    summary:
-      'A teen\'s guide to understanding and managing anxiety — what it actually is, what helps day to day, when to ask for help, and who to ask.',
+    category: 'Health & Science',
+    hue: 185,
+    summary: 'A teen\'s guide to understanding and managing anxiety — what it actually is, what helps day to day, when to ask for help, and who to ask.',
     lead: 'Anxiety is something every teenager experiences. Almost none of them are told what to do about it.',
     body: [
       'This one is not a system. It is a piece of writing, which is a different kind of problem: nothing compiles, nothing passes, and the only test is whether someone reading it at two in the morning finds something they can use.',
@@ -166,49 +451,103 @@ export const projects = [
     ],
   },
   {
-    slug: 'baseline',
-    index: '04',
-    title: 'Baseline',
-    titleLines: ['Baseline'],
-    kicker: 'Hack for Humanity · Solo build',
-    year: '2026',
-    role: 'Solo — design, clinical logic, ML pipeline, tests, deployment',
+    slug: 'earshot',
+    title: 'Earshot',
+    titleLines: ['Earshot'],
+    kicker: 'TechCommons Hacks V2 · Solo build',
+    date: '2026-09-18',
+    role: 'Solo — protocol design, DSP, interface, verification',
     status: 'Shipped',
-    tags: ['Health', 'Computer vision', 'Hackathon'],
-    hue: 273,
-    summary:
-      'Concussion is diagnosed on what the injured person tells you, and they are usually motivated to say they\'re fine. Baseline screens for it by watching the eyes instead. Seven VOMS-style tasks, near point of convergence measured in real centimetres, and a recovery curve read against your own baseline. The camera never leaves your machine.',
-    lead: 'An oculomotor concussion screening that runs entirely in the browser, and refuses to give you a number when the number would not mean anything.',
+    category: 'Interactive',
+    hue: 351,
+    summary: 'A 16-tone acoustic modem built from scratch in the browser — one device plays a message as sound, every other device in the room decodes it back to text, with no network, pairing or install.',
+    lead: 'When the network goes down, the phones in the room still work. They just cannot talk to each other. Sound can carry that.',
     body: [
-      'We diagnose concussion almost entirely on self-report, from people who want to get back on the field. Eye movement is harder to lie about, and roughly half of concussion patients develop an oculomotor or vestibular problem that a validated seven-task screening can surface.',
-      'Baseline runs that screening in a browser tab. MediaPipe\'s face mesh runs in WebAssembly on the user\'s own machine, and I vendored the 11.7 MB runtime and 3.7 MB model into the app\'s own origin, so not even the model download tells a third party who is using it. Near point of convergence comes out in centimetres by exploiting a biological constant: the human iris is about 11.7 mm across in every adult, which turns a webcam into a ruler.',
-      'The part I care about most is what it declines to say. It won\'t report a gain from too few frames, or call 0.1 cm of webcam noise a deterioration, and when it can\'t measure something it says so rather than leaving a blank that reads as normal.',
-      'Light and motion sensitivity are concussion symptoms, so the interface dims itself before the screening starts, and tells you it\'s doing it.',
+      'Bluetooth needs pairing, one device at a time. AirDrop is Apple-only. A QR code is one reader at a time and caps out around two kilobytes. None of them get the same sentence onto thirty phones at once when the network is gone — but sound is omnidirectional and one-to-many for free, and every phone made in the last twenty years can already produce and hear it.',
+      'Earshot is a 16-tone, continuous-phase FSK modem written from scratch in TypeScript, with no audio or DSP libraries. It modulates across 1500–3625 Hz at 125 Hz spacing, 32 ms symbols, for a data rate of 125 bits per second. Each frame is framed with sync symbols, payload nibbles, a CRC-8 and an end tone, and detection runs a Hann-windowed Goertzel filter over eighteen tones with a confidence gate. Timing is recovered by refining the onset against the sync plateau, then searching sub-symbol offsets and letting the CRC arbitrate which one is right.',
+      'Reliability comes entirely from retransmission rather than acknowledgement: the transmitter repeats the whole frame blindly, and the first copy that passes CRC wins. Measured against synthetic channels, it decodes correctly at −13 dB SNR, produces zero false messages across 120 seconds of pure white noise, and survives simulated room reverb and arbitrary timing offsets. A 28-character alert costs 2.0 seconds of airtime, or 6.0 seconds sent three times for safety.',
+      'The README is upfront about what this is not: not private, since anything within earshot receives it — that is the mechanism, not a bug; not fast, at 15.6 bytes a second it is for a sentence, not a file; and not guaranteed, since there is no acknowledgement and the transmitter just hopes the retransmissions land.',
     ],
     highlights: [
-      ['Event', 'Hack for Humanity 2026'],
-      ['Stack', 'React 19, TypeScript, Vite, Tailwind, MediaPipe (WASM), Canvas'],
-      ['Scale', '116 tests. Fully static, no backend, no account, no analytics'],
-      ['Hard part', 'Declining to report a number that would not mean anything'],
+      ['Event', 'Prepared for TechCommons Hacks V2; completed, not submitted'],
+      ['Protocol', '16-tone continuous-phase FSK, 1500–3625 Hz, 125 bps'],
+      ['Measured', '−13 dB SNR decode; 0 false messages in 120 s of white noise'],
+      ['Hard part', 'No pairing and no acknowledgement — just retransmission and a CRC'],
     ],
     links: [
-      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/baseline/' },
-      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/baseline' },
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/earshot/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/earshot' },
+    ],
+  },
+  {
+    slug: 'leaseleak',
+    title: 'LeaseLeak',
+    titleLines: ['Lease', 'Leak'],
+    kicker: 'GatewayGS Hackathon 2 · Solo build',
+    date: '2026-09-16',
+    role: 'Solo — data pipeline, deterministic engine, AI verification layer, deploy',
+    status: 'Shipped',
+    category: 'AI & ML',
+    hue: 268,
+    summary: 'Drop a rent roll and it matches every unit to HUD and Zillow benchmarks, times renewals to the seasonal peak, and writes the renewal letters — with an AI layer that gets checked on every number it cites.',
+    lead: 'Every dollar figure on the page is computed by a deterministic engine. The model only writes the memo, and it is checked on every number it uses.',
+    body: [
+      'Built solo and entered in GatewayGS Hackathon 2. You drop a CSV or XLSX rent roll and, five seconds later, see how far under market each unit is against HUD\'s Small Area Fair Market Rent for its ZIP and bedroom count, which leases end in the wrong month, and a renewal letter already written for each one. FMR is the 40th percentile of local gross rents, so the gap it reports is a conservative floor, not an inflated pitch number.',
+      'The same base numbers get reused rather than re-derived: Zillow\'s ZORI index turns into a seasonal curve so renewal terms can be timed to end at the local peak, the gap gets priced as building equity through an adjustable cap rate, and HUD\'s voucher payment standards are checked against the same rents to see where a housing voucher would close the gap without raising anyone\'s rent. A rent-to-income check against Census ACS data flags any proposed increase that would push a household over 30% of income before a letter goes out.',
+      'The model is only allowed to do what a spreadsheet cannot: it writes the headline, the prioritised actions and a caution in plain language, sending it only the unit figures with tenant names stripped. Nothing it writes is trusted on its own — a client-side check pulls every dollar, percentage and month figure out of the model\'s reply and matches each one against the engine\'s own output, so the interface can say exactly how many of the cited figures trace back to a real computation and flag the one that does not.',
+      'The Gemini calls run through a Vercel function with an origin allow-list, a per-IP rate limit and a 200 KB body cap, and the same functions are called cross-origin from the GitHub Pages mirror. Everything else — the matching, the gap math, the seasonal timing, the letters — runs in the browser with no account and no upload.',
+    ],
+    highlights: [
+      ['Event', 'GatewayGS Hackathon 2 — solo entry'],
+      ['Data', 'HUD Small Area FMR (38,601 ZIPs), Zillow ZORI, Census ACS income'],
+      ['Guard', 'Every AI-cited figure is matched back against the engine\'s own numbers'],
+      ['Hard part', 'Keeping a language model from citing a number it did not compute'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://leaseleak.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/leaseleak' },
+    ],
+  },
+  {
+    slug: 'habitat-pulse',
+    title: 'Habitat Pulse',
+    titleLines: ['Habitat', 'Pulse'],
+    kicker: 'Hack the Habitat · Live data',
+    date: '2026-09-13',
+    role: 'Concept, build — data plumbing, motion, accessibility',
+    status: 'Shipped',
+    category: 'Health & Science',
+    hue: 171,
+    summary: 'Search any place on Earth for its live air quality, current weather and the threatened species recorded nearby — pulled straight from public APIs, behind a hero that expands as you scroll.',
+    lead: 'Somewhere, right now, there is a number for this place. The work is making it mean something.',
+    body: [
+      'The Hack the Habitat brief was "build tech that protects the planet", which is the kind of prompt that invites a project to tell you what to feel. This one only tells you what is true where you are standing: the live US air quality index with a plain-language health read and a best-effort call on which pollutant is driving it, the current temperature, humidity, wind and today\'s range, and the threatened species recorded within fifty kilometres — sorted by IUCN Red List severity, each one linking back to its GBIF record.',
+      'The rule underneath it was simple and load-bearing: if a number is not real, it does not appear. There is no account, no API key and no backend — every fetch is a direct client-side call to free public data from Open-Meteo and GBIF, and the actions it suggests are tied to what was actually found rather than to generic environmentalism.',
+      'The hero is scroll-driven — a photograph that grows to fill the screen before the tool underneath it appears — which turns motion preference from a nicety into a correctness problem. Reduced-motion visitors get the hero mounted fully expanded with the scrub never attached, so the page scrolls normally. A deep link also mounts expanded, so a shared result is visible immediately, but keeps the scrub, because following a link says nothing about how someone feels about motion. Two separate tested predicates, not one flag.',
+      'The bug worth keeping is in the species query. GBIF\'s Red List category filter silently matches zero records if the categories are comma-joined into one value; it needs repeated query parameters. It passed every test written against the documented example responses and only surfaced by calling the real endpoint — so the fix ships with a regression test pinning the shape of the URL, not just the result.',
+    ],
+    highlights: [
+      ['Event', 'Hack the Habitat 2026'],
+      ['Stack', 'Next.js 16, React 19, TypeScript, Tailwind v4'],
+      ['Rule', 'If a number is not real, it does not appear'],
+      ['Took away', 'A filter that returns zero is worse than one that errors'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/habitat-pulse-hero/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/habitat-pulse-hero' },
     ],
   },
   {
     slug: 'hookline',
-    index: '05',
     title: 'Hookline',
     titleLines: ['Hookline'],
     kicker: 'Solo build · Runs in the browser',
-    year: '2026',
+    date: '2026-09-08',
     role: 'Solo — engine, CLI, interface, evaluation',
     status: 'Shipped',
-    tags: ['NLP', 'Tooling', 'Web'],
+    category: 'AI & ML',
     hue: 69,
-    summary:
-      'One long recording in, a publishable week of channel output out. It measures where a transcript holds attention and cuts where the subject actually changes — no account, no upload, no API key.',
+    summary: 'One long recording in, a publishable week of channel output out. It measures where a transcript holds attention and cuts where the subject actually changes — no account, no upload, no API key.',
     lead: 'Ask a model to find the good parts and it hands back the parts that summarise well. A summary is the thing that removes the reason to watch.',
     body: [
       'Clipping is the tax on long-form. Six good clips out of a forty-five minute episode — found, trimmed, hooked, titled for three platforms, captioned and scheduled — is four to six hours, every week, forever. The tempting fix is to ask a language model which moments are good, and it fails in a way that is easy to miss: it returns the moments that summarise well, which is close to the opposite of what holds someone on a vertical feed.',
@@ -229,17 +568,15 @@ export const projects = [
   },
   {
     slug: 'loop-room',
-    index: '06',
     title: 'Loop Room',
     titleLines: ['Loop', 'Room'],
     kicker: 'Code to Connect · Realtime multiplayer',
-    year: '2026',
+    date: '2026-09-05',
     role: 'Concept, direction, build — realtime, audio, 3D, export',
     status: 'Shipped',
-    tags: ['Realtime', 'Hackathon', 'Web'],
+    category: 'Interactive',
     hue: 324,
-    summary:
-      'Four friends, one browser tab each. Build a two-bar loop together, draw a frame each, and leave with a music video none of you could have made alone.',
+    summary: 'Four friends, one browser tab each. Build a two-bar loop together, draw a frame each, and leave with a music video none of you could have made alone.',
     lead: 'No feed, no library, nothing to browse. The only thing you take away is the thing the four of you made in the last ten minutes.',
     body: [
       'Code to Connect asked how digital entertainment could be made more joyful and more intentional — how you turn somebody from a consumer into a participant. Most answers to that bolt a social layer onto a feed. Loop Room has no feed and no library; there is nothing in it to consume at all. Up to four people join a room with a four-letter code, and ten minutes later they leave with a file.',
@@ -259,485 +596,72 @@ export const projects = [
     ],
   },
   {
-    slug: 'leaseleak',
-    index: '07',
-    title: 'LeaseLeak',
-    titleLines: ['Lease', 'Leak'],
-    kicker: 'GatewayGS Hackathon 2 · Solo build',
-    year: '2026',
-    role: 'Solo — data pipeline, deterministic engine, AI verification layer, deploy',
+    slug: 'baseline',
+    title: 'Baseline',
+    titleLines: ['Baseline'],
+    kicker: 'Hack for Humanity · Solo build',
+    date: '2026-09-04',
+    role: 'Solo — design, clinical logic, ML pipeline, tests, deployment',
     status: 'Shipped',
-    tags: ['AI/ML', 'Hackathon', 'Tooling'],
-    hue: 95,
-    summary:
-      'Drop a rent roll and it matches every unit to HUD and Zillow benchmarks, times renewals to the seasonal peak, and writes the renewal letters — with an AI layer that gets checked on every number it cites.',
-    lead: 'Every dollar figure on the page is computed by a deterministic engine. The model only writes the memo, and it is checked on every number it uses.',
+    category: 'Health & Science',
+    hue: 273,
+    summary: 'Concussion is diagnosed on what the injured person tells you, and they are usually motivated to say they\'re fine. Baseline screens for it by watching the eyes instead. Seven VOMS-style tasks, near point of convergence measured in real centimetres, and a recovery curve read against your own baseline. The camera never leaves your machine.',
+    lead: 'An oculomotor concussion screening that runs entirely in the browser, and refuses to give you a number when the number would not mean anything.',
     body: [
-      'Built solo and entered in GatewayGS Hackathon 2. You drop a CSV or XLSX rent roll and, five seconds later, see how far under market each unit is against HUD\'s Small Area Fair Market Rent for its ZIP and bedroom count, which leases end in the wrong month, and a renewal letter already written for each one. FMR is the 40th percentile of local gross rents, so the gap it reports is a conservative floor, not an inflated pitch number.',
-      'The same base numbers get reused rather than re-derived: Zillow\'s ZORI index turns into a seasonal curve so renewal terms can be timed to end at the local peak, the gap gets priced as building equity through an adjustable cap rate, and HUD\'s voucher payment standards are checked against the same rents to see where a housing voucher would close the gap without raising anyone\'s rent. A rent-to-income check against Census ACS data flags any proposed increase that would push a household over 30% of income before a letter goes out.',
-      'The model is only allowed to do what a spreadsheet cannot: it writes the headline, the prioritised actions and a caution in plain language, sending it only the unit figures with tenant names stripped. Nothing it writes is trusted on its own — a client-side check pulls every dollar, percentage and month figure out of the model\'s reply and matches each one against the engine\'s own output, so the interface can say exactly how many of the cited figures trace back to a real computation and flag the one that does not.',
-      'The Gemini calls run through a Vercel function with an origin allow-list, a per-IP rate limit and a 200 KB body cap, and the same functions are called cross-origin from the GitHub Pages mirror. Everything else — the matching, the gap math, the seasonal timing, the letters — runs in the browser with no account and no upload.',
+      'We diagnose concussion almost entirely on self-report, from people who want to get back on the field. Eye movement is harder to lie about, and roughly half of concussion patients develop an oculomotor or vestibular problem that a validated seven-task screening can surface.',
+      'Baseline runs that screening in a browser tab. MediaPipe\'s face mesh runs in WebAssembly on the user\'s own machine, and I vendored the 11.7 MB runtime and 3.7 MB model into the app\'s own origin, so not even the model download tells a third party who is using it. Near point of convergence comes out in centimetres by exploiting a biological constant: the human iris is about 11.7 mm across in every adult, which turns a webcam into a ruler.',
+      'The part I care about most is what it declines to say. It won\'t report a gain from too few frames, or call 0.1 cm of webcam noise a deterioration, and when it can\'t measure something it says so rather than leaving a blank that reads as normal.',
+      'Light and motion sensitivity are concussion symptoms, so the interface dims itself before the screening starts, and tells you it\'s doing it.',
     ],
     highlights: [
-      ['Event', 'GatewayGS Hackathon 2 — solo entry'],
-      ['Data', 'HUD Small Area FMR (38,601 ZIPs), Zillow ZORI, Census ACS income'],
-      ['Guard', "Every AI-cited figure is matched back against the engine's own numbers"],
-      ['Hard part', 'Keeping a language model from citing a number it did not compute'],
+      ['Event', 'Hack for Humanity 2026'],
+      ['Stack', 'React 19, TypeScript, Vite, Tailwind, MediaPipe (WASM), Canvas'],
+      ['Scale', '116 tests. Fully static, no backend, no account, no analytics'],
+      ['Hard part', 'Declining to report a number that would not mean anything'],
     ],
     links: [
-      { label: 'Live demo', href: 'https://leaseleak.vercel.app' },
-      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/leaseleak' },
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/baseline/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/baseline' },
     ],
   },
   {
-    slug: 'earshot',
-    index: '08',
-    title: 'Earshot',
-    titleLines: ['Earshot'],
-    kicker: 'TechCommons Hacks V2 · Solo build',
-    year: '2026',
-    role: 'Solo — protocol design, DSP, interface, verification',
-    status: 'Shipped',
-    tags: ['Audio', 'Web', 'Hackathon'],
-    hue: 351,
-    summary:
-      'A 16-tone acoustic modem built from scratch in the browser — one device plays a message as sound, every other device in the room decodes it back to text, with no network, pairing or install.',
-    lead: 'When the network goes down, the phones in the room still work. They just cannot talk to each other. Sound can carry that.',
+    slug: 'explain-it-back',
+    title: 'Explain It Back',
+    titleLines: ['Explain', 'It Back'],
+    kicker: 'Study tool · Solo build',
+    date: '2026-08-30',
+    role: 'Solo — concept, engine, guard, evaluation, demo film',
+    status: 'Submitted',
+    category: 'AI & ML',
+    hue: 222,
+    summary: 'A study tool built on one rule: it never explains anything. You explain the concept; it finds the holes in what you actually understand and asks you one hard question.',
+    lead: 'Reading your notes feels like understanding. The feeling is the problem.',
     body: [
-      'Bluetooth needs pairing, one device at a time. AirDrop is Apple-only. A QR code is one reader at a time and caps out around two kilobytes. None of them get the same sentence onto thirty phones at once when the network is gone — but sound is omnidirectional and one-to-many for free, and every phone made in the last twenty years can already produce and hear it.',
-      'Earshot is a 16-tone, continuous-phase FSK modem written from scratch in TypeScript, with no audio or DSP libraries. It modulates across 1500–3625 Hz at 125 Hz spacing, 32 ms symbols, for a data rate of 125 bits per second. Each frame is framed with sync symbols, payload nibbles, a CRC-8 and an end tone, and detection runs a Hann-windowed Goertzel filter over eighteen tones with a confidence gate. Timing is recovered by refining the onset against the sync plateau, then searching sub-symbol offsets and letting the CRC arbitrate which one is right.',
-      'Reliability comes entirely from retransmission rather than acknowledgement: the transmitter repeats the whole frame blindly, and the first copy that passes CRC wins. Measured against synthetic channels, it decodes correctly at −13 dB SNR, produces zero false messages across 120 seconds of pure white noise, and survives simulated room reverb and arbitrary timing offsets. A 28-character alert costs 2.0 seconds of airtime, or 6.0 seconds sent three times for safety.',
-      'The README is upfront about what this is not: not private, since anything within earshot receives it — that is the mechanism, not a bug; not fast, at 15.6 bytes a second it is for a sentence, not a file; and not guaranteed, since there is no acknowledgement and the transmitter just hopes the retransmissions land.',
+      'Rozenblit and Keil called it the illusion of explanatory depth: people rate their grasp of an everyday mechanism high, then rate it far lower the moment they are made to write out how it actually works. Every study method built on recognition leaves the illusion intact — and an AI that explains a concept beautifully is the strongest recognition hit of all. You read something fluent, it makes sense, and you file that feeling as knowledge.',
+      'What reliably works is generation: producing the explanation yourself, from memory, and finding out where you run out. Almost nobody does it, because it needs a listener knowledgeable enough to catch you and disciplined enough not to rescue you. Explain It Back is that listener. You name a concept, explain it cold, and it diagnoses the shape of what you said — six specific ways a mental model bends, quoted back in your own words — then asks one Socratic question aimed at the biggest structural gap. When it catches you using a term as a substitute for the idea, that term is banned from your next attempt and the ban is enforced.',
+      'The single promise the product makes could not rest on a system prompt, because instructions to a language model are followed most of the time and most is not a guarantee. So the rule is enforced in three independent layers: the prompt, a mechanical scan that deletes answer-asserting sentences before the learner ever sees them, and a badge in the interface so you can watch the tool police itself. Red-teaming the first version showed seven of nine adversarial probes walking straight through — a model hands over the answer just as completely in a teacherly register as in a correction — so two more detection layers went in.',
+      'The last decision was to measure it rather than assert it. The guard corpus scores 97.6% F1 across 39 leak cases at 100% precision, on top of 193 unit tests and 71 browser checks that drive the built file exactly as a judge would, including a full WCAG 2.2 AA pass computed from rendered pixels. Runs against a live model are published as a range — F1 81.3, 84.8, 88.2 across three runs on the same 16 cases — because the range is the honest number and any single one of them would be a choice about which run to show.',
     ],
     highlights: [
-      ['Event', 'Prepared for TechCommons Hacks V2; completed, not submitted'],
-      ['Protocol', '16-tone continuous-phase FSK, 1500–3625 Hz, 125 bps'],
-      ['Measured', '−13 dB SNR decode; 0 false messages in 120 s of white noise'],
-      ['Hard part', 'No pairing and no acknowledgement — just retransmission and a CRC'],
+      ['Event', 'Prometheus August AI Challenge — solo entry'],
+      ['Rule', 'It never explains. Enforced in code, not only in the prompt'],
+      ['Guard', '97.6% F1 over 39 leak cases, at 100% precision'],
+      ['Hard part', 'Making a promise a language model cannot break'],
     ],
     links: [
-      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/earshot/' },
-      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/earshot' },
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/explain-it-back/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' },
     ],
   },
-  {
-    "slug": "scent-shelf",
-    "index": '09',
-    "title": "Scent Shelf",
-    "titleLines": [
-      "Scent",
-      "Shelf"
-    ],
-    "kicker": "Collection tool · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Shipped",
-    "tags": [
-      "Web",
-      "Tooling"
-    ],
-    "hue": 34,
-    "summary": "A perfume collection, wishlist and formula notebook in one browser app — track what is left in each bottle, record wears, and version your own blends.",
-    "lead": "A collection is more useful when you remember what you actually wear.",
-    "body": [
-      "Scent Shelf brings a shelf, wishlist and homemade blends into one small app. Bottle cards show how much remains; search, scent-family filters and sorting make the collection usable as it grows. Each fragrance holds its notes, season, rating and wear history.",
-      "The blend notebook accepts drops, millilitres or grams and calculates each ingredient’s share. Formula versions, resting times and ingredient notes keep an experiment reproducible. The collection stays in browser storage on that device; optional perfume lookup goes through a server function with its Gemini key kept off the page."
-    ],
-    "highlights": [
-      [
-        "Format",
-        "Single HTML app with browser-local collection storage"
-      ],
-      [
-        "Tools",
-        "Wear log, note pyramids, wishlist and versioned blend formulas"
-      ],
-      [
-        "AI",
-        "Optional server-side perfume lookup"
-      ],
-      [
-        "Boundary",
-        "Browser storage does not sync your collection between devices"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://scent-shelf-tau.vercel.app"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/scent-shelf"
-      }
-    ]
-  },
-  {
-    "slug": "stillwarm",
-    "index": '10',
-    "title": "Stillwarm",
-    "titleLines": [
-      "Still",
-      "warm"
-    ],
-    "kicker": "Remodeler tooling · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Shipped",
-    "tags": [
-      "Web",
-      "Tooling"
-    ],
-    "hue": 17,
-    "summary": "A live estimate-follow-up site and operator workspace for residential remodelers, turning open estimates into a dated follow-up queue.",
-    "lead": "The estimate was sent. The next conversation still needs an owner.",
-    "body": [
-      "Stillwarm combines a public service site, an illustrative recovery calculator and a working waitlist with a practical operator workspace. Import an estimate CSV, build a dated follow-up queue, and export it for the person managing the work.",
-      "Customer estimate files are parsed in the browser rather than uploaded. The public waitlist uses a validated server route and an n8n data table to keep signups persistent and deduplicated. The product supports a managed service; it does not claim to close sales or autonomously send follow-ups."
-    ],
-    "highlights": [
-      [
-        "Product",
-        "Public site, recovery calculator, waitlist and operator workspace"
-      ],
-      [
-        "Privacy",
-        "Estimate CSV processing stays in the browser"
-      ],
-      [
-        "Backend",
-        "Validated waitlist route with persistent n8n storage"
-      ],
-      [
-        "Boundary",
-        "Follow-up execution remains a human-operated service"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://stillwarm-opal.vercel.app"
-      }
-    ]
-  },
-  {
-    "slug": "in-its-place",
-    "index": '11',
-    "title": "In Its Place",
-    "titleLines": [
-      "In Its",
-      "Place"
-    ],
-    "kicker": "LexHack 2026 · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Completed prototype",
-    "tags": [
-      "Web",
-      "Legal tech",
-      "Hackathon"
-    ],
-    "hue": 210,
-    "summary": "A deterministic proof desk that applies a D.C. bill’s edit instructions to a historical Code section, with every change traced to its source sentence.",
-    "lead": "Read the law a bill would make, alongside the words that changed it.",
-    "body": [
-      "Bills often describe edits without showing the resulting statute. In Its Place makes that step inspectable: it parses twelve instructions from D.C. Law 25-108, applies them to a historical snapshot of D.C. Code § 38-501, and pairs each change with the instruction that caused it.",
-      "The compiler runs without a language model, server or API key. If a quoted target is absent, it raises a query instead of inventing an edit. This is a one-section prototype, and its replay is compared openly with the Council’s later codification, including the differences it cannot reproduce."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "LexHack 2026"
-      ],
-      [
-        "Core",
-        "TypeScript instruction parser, target resolver and edit applier"
-      ],
-      [
-        "Evidence",
-        "Checked-in D.C. Council XML snapshots"
-      ],
-      [
-        "Scope",
-        "One Code section; queries on unsupported edits"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://rishikrrontala-bot.github.io/lexhack-2026/"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/lexhack-2026"
-      }
-    ]
-  },
-  {
-    "slug": "sightline",
-    "index": '12',
-    "title": "Sightline",
-    "titleLines": [
-      "Sightline"
-    ],
-    "kicker": "Next Byte Hacks V4 · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Shipped",
-    "tags": [
-      "Web",
-      "3D",
-      "Hackathon"
-    ],
-    "hue": 143,
-    "summary": "Move a parked van or change approach speed at a simulated school crossing, and see the available view compared with calculated stopping distance.",
-    "lead": "A painted crossing cannot show you what a parked vehicle hides.",
-    "body": [
-      "Sightline links an interactive crossing scene to a pure geometry and physics model. Changing the van’s setback or the driver’s speed updates the visible approach distance, the stopping-distance calculation and the measured trace together.",
-      "The same model drives a 3D scene and a diagram fallback. Scenarios can be shared by URL, and the assumptions remain visible beside the result. It is an educational simulation with no field validation; a positive modeled margin does not certify a real crossing safe."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "Next Byte Hacks: V4"
-      ],
-      [
-        "Stack",
-        "React, TypeScript, React Three Fiber and Vite"
-      ],
-      [
-        "Model",
-        "Line-of-sight geometry plus reaction and braking distance"
-      ],
-      [
-        "Boundary",
-        "Illustrative crossing, fixed assumptions, no safety certification"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://rishikrrontala-bot.github.io/next-byte-hacks-v4/"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/next-byte-hacks-v4"
-      }
-    ]
-  },
-  {
-    "slug": "withheld",
-    "index": '13',
-    "title": "Withheld",
-    "titleLines": [
-      "Withheld"
-    ],
-    "kicker": "ML Empowerment · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Submitted",
-    "tags": [
-      "AI/ML",
-      "Research",
-      "Hackathon"
-    ],
-    "hue": 48,
-    "summary": "A College Scorecard explorer that separates official earnings from supported model estimates, shows uncertainty, and leaves unsupported outcomes unknown.",
-    "lead": "The missing value is part of the information. Keep it visible.",
-    "body": [
-      "Withheld explores program-level college outcomes without pretending that suppressed earnings are known. Visitors can search institutions, inspect provenance, compare programs and export labeled records. Supported model estimates appear with intervals; programs with too little comparable evidence receive an abstention.",
-      "A frozen LightGBM pipeline separates training, calibration and testing by institution family. The browser consumes precomputed predictions and published validation evidence. The interval coverage falls short of its target, and validation on published outcomes cannot establish accuracy on the genuinely suppressed records. Those limits appear alongside the result."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "Submitted to ML Empowerment Build Challenge 3.0"
-      ],
-      [
-        "Data",
-        "U.S. Department of Education College Scorecard"
-      ],
-      [
-        "Model",
-        "LightGBM quantiles with separate calibration and held-out testing"
-      ],
-      [
-        "Boundary",
-        "Research prototype; suppressed values remain unknown"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://rishikrrontala-bot.github.io/gibc-v2/"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/gibc-v2"
-      }
-    ]
-  },
-  {
-    "slug": "submitline",
-    "index": '14',
-    "title": "Submitline",
-    "titleLines": [
-      "Submit",
-      "line"
-    ],
-    "kicker": "LovHack Season 3 · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Submitted",
-    "tags": [
-      "AI/ML",
-      "Tooling",
-      "Hackathon"
-    ],
-    "hue": 190,
-    "summary": "A submission preflight that turns rules and draft links into an evidence board: verified, blocked or needing human review.",
-    "lead": "A finished build only counts if a judge can reach the evidence.",
-    "body": [
-      "Submitline pairs editable submission requirements with unauthenticated link checks, public GitHub visibility and YouTube metadata. Each requirement keeps its own evidence and status. An available page does not automatically count as a playable video, and unavailable duration evidence stays a human-review item.",
-      "Optional deAPI video analysis adds labeled visual observations with timeline links. Server-side address checks reject private destinations and revalidate redirects. Drafts stay in browser storage and can be exported as Markdown. The tool helps review a submission; it does not promise eligibility or submit on the entrant’s behalf."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "LovHack Season 3 — submitted October 4, 2026"
-      ],
-      [
-        "Stack",
-        "Next.js, TypeScript and server-side link checks"
-      ],
-      [
-        "Evidence",
-        "Public repository checks, video metadata and optional deAPI observations"
-      ],
-      [
-        "Rule",
-        "Separate verified, blocked and human-review states; no readiness score"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://submitline.vercel.app"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/submitline"
-      }
-    ]
-  },
-  {
-    "slug": "returnline",
-    "index": '15',
-    "title": "Returnline",
-    "titleLines": [
-      "Return",
-      "line"
-    ],
-    "kicker": "ImpactHack 2026 · Solo build",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Shipped",
-    "tags": [
-      "AI/ML",
-      "Education",
-      "Hackathon"
-    ],
-    "hue": 225,
-    "summary": "Turn class notices after an absence into source-linked tasks, questions and a two-day catch-up plan that respects the time available.",
-    "lead": "Missing a day should not mean losing the thread.",
-    "body": [
-      "Returnline accepts up to five class notices. Gemini proposes tasks, dates and missing materials; the server rejects quotations absent from the pasted source and only parses supported date phrases within verified quotes. The student can review, edit or remove every item.",
-      "A deterministic planner puts prerequisite questions ahead of blocked work, orders deadlines and exposes capacity shortfalls. The printable brief and copyable questions support the next conversation without messaging teachers. The fictional example is labeled, and live analysis sends the pasted notice text to Gemini."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "ImpactHack 2026"
-      ],
-      [
-        "Stack",
-        "Next.js, TypeScript, Gemini and browser storage"
-      ],
-      [
-        "Core",
-        "Exact-source checks followed by deterministic planning"
-      ],
-      [
-        "Boundary",
-        "Quoted evidence still needs interpretation and student review"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://returnline.vercel.app"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/returnline"
-      }
-    ]
-  },
-  {
-    "slug": "patchline",
-    "index": '16',
-    "title": "Patchline",
-    "titleLines": [
-      "Patch",
-      "line"
-    ],
-    "kicker": "UnivaBio 2026 · Simulation prototype",
-    "year": "2026",
-    "role": "Solo — concept, implementation, interface and verification",
-    "status": "Completed prototype",
-    "tags": [
-      "AI/ML",
-      "Simulation",
-      "Hackathon"
-    ],
-    "hue": 345,
-    "summary": "A working digital twin of a proposed smart bandage: synthetic sensor traces, a trained pattern classifier and evidence-linked review, with faulty sensors holding simulated actions.",
-    "lead": "Before a system reacts to a signal, it has to decide whether the signal can be trusted.",
-    "body": [
-      "Patchline generates four reproducible wound-environment channels and trains a small classifier on separate synthetic traces. Stable, changing-pattern and sensor-fault scenarios make the relationship between readings, model output and review actions visible.",
-      "An orchestrator combines model scores with quality checks, producing an evidence-linked handoff and printable report. Hypothetical treatment proposals use abstract simulation units only. This completed software prototype has no hardware connection, clinical diagnosis or treatment output; its classifier demonstrates synthetic patterns rather than clinical performance."
-    ],
-    "highlights": [
-      [
-        "Event",
-        "UnivaBio 2026"
-      ],
-      [
-        "Implementation",
-        "Dependency-free simulator, classifier and constrained orchestrator"
-      ],
-      [
-        "Evidence",
-        "Source-linked readings, sensor-quality gates and printable handoff"
-      ],
-      [
-        "Boundary",
-        "Synthetic system-design demonstration; no patient or device use"
-      ]
-    ],
-    "links": [
-      {
-        "label": "Live demo",
-        "href": "https://rishikrrontala-bot.github.io/patchline/"
-      },
-      {
-        "label": "GitHub",
-        "href": "https://github.com/rishikrrontala-bot/patchline"
-      }
-    ]
-  },
-
 ];
+
+export const projects = [...work]
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .map((p, i) => ({
+    ...p,
+    index: String(i + 1).padStart(2, '0'),
+    year: p.date.slice(0, 4),
+  }));
 
 // The drag-to-explore plane mixes projects with fragments — the way a studio
 // index page mixes work with the thinking around it.
@@ -757,6 +681,11 @@ export const worldFragments = [
   { kind: 'statement', text: 'A fabricated number that looks like a measurement is worse than a missing one.' },
   { kind: 'statement', text: 'The model can write the memo. It does not get to write the numbers.' },
   { kind: 'statement', text: 'Sound is omnidirectional and one-to-many for free.' },
+  { kind: 'statement', text: 'An interpretation should say that it is one.' },
+  { kind: 'statement', text: 'A water balance has to say where every drop went.' },
+  { kind: 'stat', label: 'Built', value: `${projects.length} projects` },
+  { kind: 'statement', text: 'Every square is paper that actually exists.' },
+  { kind: 'statement', text: 'Same twelve cards. The race is who sees the sets first.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];

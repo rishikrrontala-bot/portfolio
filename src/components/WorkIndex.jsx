@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { gsap } from '../lib/gsap';
 import {
   cursorProps,
@@ -7,27 +7,29 @@ import {
   useIsoLayoutEffect,
   useReducedMotion,
 } from '../lib/hooks';
-import { projects } from '../data/site';
+import { projects, categories } from '../data/site';
 import ProjectPlate from './ProjectPlate';
 import { Reveal, DrawRule } from './Reveal';
 
 const ALL = 'All';
 
 export default function WorkIndex() {
-  const [filter, setFilter] = useState(ALL);
+  // A project page's category chip links back here with that category picked.
+  const { state } = useLocation();
+  const [filter, setFilter] = useState(() =>
+    categories.includes(state?.category) ? state.category : ALL,
+  );
   const [active, setActive] = useState(null);
   const fine = useFinePointer();
   const reduced = useReducedMotion();
   const previewRef = useRef(null);
   const listRef = useRef(null);
 
-  const filters = useMemo(
-    () => [ALL, ...Array.from(new Set(projects.flatMap((p) => p.tags)))],
-    [],
-  );
+  // Always the same five chips, in a fixed order — one category per project.
+  const filters = [ALL, ...categories];
 
   const shown = useMemo(
-    () => (filter === ALL ? projects : projects.filter((p) => p.tags.includes(filter))),
+    () => (filter === ALL ? projects : projects.filter((p) => p.category === filter)),
     [filter],
   );
 
@@ -92,6 +94,7 @@ export default function WorkIndex() {
             as="h2"
             lines={['Selected', 'work']}
             className="t-display"
+            style={{ fontSize: 'clamp(44px, 8vw, 132px)' }}
             lineClassName=""
             stagger={0.06}
           />
@@ -176,9 +179,9 @@ export default function WorkIndex() {
 
               {/* External links live outside the card link — an anchor cannot
                   nest inside another anchor. */}
-              {p.links?.length > 0 && (
+              {p.links?.some((l) => !l.secondary) && (
                 <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
-                  {p.links.map((l) => (
+                  {p.links.filter((l) => !l.secondary).map((l) => (
                     <li key={l.label}>
                       <a
                         href={l.href}

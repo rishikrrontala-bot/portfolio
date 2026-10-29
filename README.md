@@ -34,7 +34,8 @@ make this yours.
 | `manifesto` | The scroll-scrubbed statement, one array entry per line |
 | `about` | About heading, paragraphs, and the facts table |
 | `capabilities` | The marquee strip |
-| `projects` | The work index, the drag plane, and one full page per entry |
+| `categories` | The five filter chips on the work index — fixed, see below |
+| `work` | One object per project: the work index, the drag plane, and one full page per entry |
 | `worldFragments` | The statements and stats interleaved into the drag plane |
 | `nav` | Menu items |
 
@@ -46,30 +47,48 @@ Keep placeholder repositories and partially integrated builds out. A completed p
 
 The October 7, 2026 review retained eight verified existing projects and added Scent Shelf, Stillwarm, In Its Place, Sightline, Withheld, Submitline, Returnline and Patchline. Muslin remains excluded because its photo pipeline is not integrated. Emoji → Emotion was removed because its completion could not be verified from the account. Remaining hackathon placeholder repositories are excluded.
 
+The October 28, 2026 review went through every repository on the account. It added Elsewhen (Congressional App Challenge 2026; private repository, so only its live app and demo video are linked), RunoffLab, Set Room and Offcut, and folded Patchline Lab and Patchline Bench into the existing Patchline entry rather than giving one idea three tiles. It also replaced eighteen free-form tags with five fixed categories, and listed every repository that is deliberately left off — with the reason — in `sync/curation.json`.
+
+### Five categories, no more
+
+The work index filters by **AI & ML · Health & Science · Education · Tools · Interactive** —
+the `categories` export. Every project picks exactly one. The list is fixed on purpose: the site
+used to build its chips from free-form tags, and twenty projects produced eighteen chips. If a
+new project seems to need a sixth category, it goes in the closest of these five. `npm test`
+fails on a category that is not in the list, on an empty category, and on any `tags` field.
+
 ### Adding a project
 
-Append an object to `projects`. Everything else — the index row, the hover preview, a tile on
-the drag plane, its own route at `/#/work/<slug>`, the "next project" link, the `01 / 04`
-counter, the filter chips — updates itself.
+Add an object anywhere in `work`. The site sorts projects newest first by `date` and numbers
+them, so there is no `index` or `year` to keep in step. Everything else — the index tile, the
+hover preview, a tile on the drag plane, its own route at `/#/work/<slug>`, the "next project"
+link, the `01 / 20` counter and its category filter — updates itself.
 
 ```js
 {
   slug: 'thing',                       // becomes /#/work/thing
-  index: '03',
   title: 'The Thing',
   titleLines: ['The', 'Thing'],        // explicit line breaks for the display setting
   kicker: 'Python · Solo',
-  year: '2026',
+  date: '2026-11-02',                  // finished or submitted; sets order, number and year
   role: 'What you actually did',
-  status: 'Shipped',
-  tags: ['AI', 'Tooling'],             // these become the filter chips
-  hue: 150,                            // 0–360; picks the generated cover art
+  status: 'Shipped',                   // Shipped · Submitted · Published · Completed prototype
+  category: 'Tools',                   // exactly one of `categories`
+  hue: 150,                            // 0–359; picks the generated cover art
   summary: 'One sentence for the index row.',
   lead: 'The line that lands at the top of the page.',
   body: ['Paragraph.', 'Paragraph.'],
-  highlights: [['Label', 'Value'], ['Label', 'Value']],
+  highlights: [['Label', 'Value'], ['Label', 'Value'], ['Label', 'Value'], ['Label', 'Value']],
+  links: [
+    { label: 'Live demo', href: 'https://…' },
+    { label: 'GitHub', href: 'https://github.com/…' },
+    { label: 'Lab demo', href: 'https://…', secondary: true }, // project page only
+  ],
 }
 ```
+
+Tiles sit two to a row, so `npm test` checks that each project's `hue` is at least 30° from the
+projects beside and below it; if it complains, move the new hue until it passes.
 
 **Covers are split by context** (`src/components/ProjectPlate.jsx`). On the index — the work
 grid, the hover preview, the drag plane — every project gets generated artwork: deterministic
@@ -77,10 +96,10 @@ warped contour rings over a hue-shifted ground, seeded from the `slug`, so the f
 reads as one set of objects rather than a row of screenshots at a row of different densities.
 Same slug, same artwork, every time, and nothing to download until you open a project.
 
-The project page uses the real thing instead: a screenshot of that project's own landing screen,
+The project page uses the real thing instead: a screenshot of that project's own app,
 from `src/assets/work/<slug>.jpg` at 1600×1000. Drop a file in, add it to the `covers` map, and
-that page picks it up; a project with no screenshot (a C++ terminal program, say) falls back to
-its generated plate. `hue` recolours the generated art — pick one well away from its neighbours,
+that page picks it up; a project with no screenshot falls back to its generated plate. `npm test`
+checks that every cover belongs to a real slug and is exactly 1600×1000. `hue` recolours the generated art — pick one well away from its neighbours,
 since the plates sit side by side in the grid.
 
 ---
@@ -200,6 +219,12 @@ Claude Code routine reads that file, writes a `projects` entry for any repo not 
 `site.js`, and opens a pull request. Merging it deploys. Nothing is added to the site
 without a review, and nothing in the entry can come from anywhere but the repo's own README.
 
+`sync/curation.json` records every public repository that is deliberately *not* on the site —
+placeholders, unfinished builds — with the reason, plus the private repositories that are linked
+only through their live apps. `npm test` lists any repository in the snapshot that is neither on
+the site nor in that file, as a to-do rather than a failure, so a brand-new repo never blocks a
+deploy but never goes unnoticed either.
+
 The snapshot is fetched here rather than by the routine because the routine's sandbox can
 only reach this repository. Run it by hand with `GITHUB_TOKEN=$(gh auth token) node
 scripts/fetch-github.mjs`.
@@ -218,12 +243,16 @@ keeps project pages resolvable on a static host — including a subpath like `/p
 ## Verify before shipping
 
 ```bash
+npm test                           # content: categories, order, links, hues, covers, GitHub coverage
 npm run build && npm run preview   # in one terminal
-npm run verify                     # contrast, reduced motion, keyboard, semantics, overflow
+npm run verify                     # contrast, reduced motion, keyboard, semantics, overflow, filters
 npm run shots                      # screenshots of every section at 1440px and 390px → shots/
 ```
 
-`npm run verify` exits non-zero on any failure, so it drops straight into CI.
+`npm test` runs in the deploy workflow before the build, so a malformed entry never reaches the
+live site. `npm run verify` exits non-zero on any failure; it also clicks through all five
+category chips and checks each one shows exactly its projects. Set `CHROMIUM_PATH` to point it at
+a local Chromium when Playwright's own browser download is not available.
 
 ---
 
@@ -249,10 +278,13 @@ src/
     Atmosphere.jsx      grain, cursor, scroll progress
     PageShell.jsx       route transitions
   pages/                Home, Project, NotFound
+tests/
+  site.test.mjs         content checks for site.js (npm test)
 scripts/
   verify.mjs            the accessibility + semantics suite
   shoot.mjs             screenshot every section at two viewports
   fetch-github.mjs      snapshot the GitHub profile into sync/github.json
 sync/
   github.json           the account's public repos, metadata and READMEs
+  curation.json         repos deliberately left off the site, and why
 ```

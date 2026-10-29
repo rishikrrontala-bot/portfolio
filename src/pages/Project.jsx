@@ -110,16 +110,19 @@ export default function Project() {
                 </div>
               ))}
             </dl>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {project.tags.map((t) => (
-                <li
-                  key={t}
-                  className="t-mono rounded-full border border-ink/20 px-3 py-1.5 text-ash"
-                >
-                  {t}
-                </li>
-              ))}
-            </ul>
+            {/* The category, as a way back into the index filtered to it. */}
+            <button
+              type="button"
+              onClick={() => {
+                navigate('/', { state: { category: project.category } });
+                setTimeout(() => scrollTo('#work'), 750);
+              }}
+              aria-label={`More ${project.category} projects`}
+              className="t-mono mt-6 rounded-full border border-ink/25 px-3 py-1.5 text-ash transition-colors duration-500 hover:border-ink/55 hover:text-ink"
+              {...cursorProps('hover', 'MORE')}
+            >
+              {project.category}
+            </button>
 
             {project.links?.length > 0 && (
               <ul className="mt-8 flex flex-col gap-3">

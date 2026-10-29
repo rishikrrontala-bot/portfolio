@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "build:single": "SINGLEFILE=1 vite build --outDir dist-single",
     "lint": "oxlint src scripts",
+    "test": "node --test tests/*.test.mjs",
     "verify": "node scripts/verify.mjs",
     "shots": "node scripts/shoot.mjs"
   },
