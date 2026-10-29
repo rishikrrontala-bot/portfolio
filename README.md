@@ -115,9 +115,15 @@ everything so the whole site moves with one accent.
 | Everywhere | Line-masked word reveal on scroll | `components/Reveal.jsx` |
 | Statement | Word-by-word opacity scrubbed to scroll position | `components/Manifesto.jsx` |
 | Hero | Generative flow field: particles advected through simplex noise | `components/HeroField.jsx` |
-| World | Infinite drag plane, tiles wrapped modulo the grid | `components/WorldGrid.jsx` |
+| World | Infinite drag plane, tiles wrapped modulo the grid; every project on it | `components/WorldGrid.jsx`, `lib/world.js` |
 | Pointer | Morphing cursor + magnetic attraction | `components/Atmosphere.jsx`, `lib/hooks.js` |
 | Routes | Two curtains — one drops, one lifts | `components/PageShell.jsx` |
+
+The World plane's grid is sized from the content (`lib/world.js`): every project appears exactly
+once, newest first from the top-left, with the thinking fragments on the squares between them, laid
+out like the two colours of a chessboard so no two projects touch, even where the plane wraps onto
+itself. Add a project and the grid grows. On very wide screens the tiles grow instead, so the plane
+always reaches both edges. Tabbing onto a tile glides it to the middle of the plane.
 
 Lenis drives scroll and is synced to GSAP's ticker, so ScrollTrigger and smooth scrolling never
 fight each other (`lib/hooks.js` → `useSmoothScroll`).
@@ -251,7 +257,8 @@ npm run shots                      # screenshots of every section at 1440px and 
 
 `npm test` runs in the deploy workflow before the build, so a malformed entry never reaches the
 live site. `npm run verify` exits non-zero on any failure; it also clicks through all five
-category chips and checks each one shows exactly its projects. Set `CHROMIUM_PATH` to point it at
+category chips and checks each one shows exactly its projects, and checks that the World plane holds
+every project and reaches both edges from phone width to 2560px. Set `CHROMIUM_PATH` to point it at
 a local Chromium when Playwright's own browser download is not available.
 
 ---
@@ -263,6 +270,7 @@ src/
   data/site.js          ← all content
   lib/gsap.js           registered plugins + the house easing curve
   lib/hooks.js          smooth scroll, magnetics, cursor bus, media queries
+  lib/world.js          World plane layout: grid size and which tile goes where
   components/
     Preloader.jsx       entry gate
     Nav.jsx             bar + fullscreen menu (inverts over dark sections)
@@ -280,6 +288,7 @@ src/
   pages/                Home, Project, NotFound
 tests/
   site.test.mjs         content checks for site.js (npm test)
+  world.test.mjs        World plane layout: every project on it, none touching
 scripts/
   verify.mjs            the accessibility + semantics suite
   shoot.mjs             screenshot every section at two viewports

@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom';
 import { gsap } from '../lib/gsap';
 import { cursorProps, useFinePointer, useReducedMotion } from '../lib/hooks';
 import { projects, worldFragments } from '../data/site';
+import { planeCells } from '../lib/world';
 import ProjectPlate from './ProjectPlate';
 import { Reveal } from './Reveal';
 
-const COLS = 4;
-const ROWS = 4;
-
 /**
- * Drag-to-explore infinite plane. Tiles are laid out on a COLS×ROWS grid and
- * wrapped modulo the grid size, so the plane never ends in any direction.
+ * Drag-to-explore infinite plane. Tiles are laid out on a cols×rows grid sized
+ * from the content (see lib/world.js) and wrapped modulo the grid size, so the
+ * plane never ends in any direction and every project is on it.
  * Desktop drags in 2D; touch drags horizontally only so the page can still
  * scroll vertically through it.
  */
@@ -23,19 +22,7 @@ export default function WorldGrid() {
   const [hint, setHint] = useState(true);
 
   /* Interleave work and thinking so the plane reads as an index, not a gallery. */
-  const cells = useMemo(() => {
-    const pool = [];
-    const frags = [...worldFragments];
-    projects.forEach((p) => {
-      pool.push({ kind: 'project', project: p });
-      pool.push(frags.shift() ?? { kind: 'statement', text: '—' });
-      pool.push(frags.shift() ?? { kind: 'statement', text: '—' });
-    });
-    while (frags.length) pool.push(frags.shift());
-    const out = [];
-    for (let i = 0; i < COLS * ROWS; i += 1) out.push(pool[i % pool.length]);
-    return out;
-  }, []);
+  const { cols: COLS, rows: ROWS, cells } = useMemo(() => planeCells(projects, worldFragments), []);
 
   useEffect(() => {
     const wrapEl = wrap.current;
@@ -54,11 +41,20 @@ export default function WorldGrid() {
       lastX: 0,
       lastY: 0,
       idle: 0,
+      focused: false,
     };
 
     const measure = () => {
       const w = wrapEl.clientWidth;
-      state.tileW = w < 720 ? 232 : Math.min(400, Math.max(280, w / 3.15));
+      const h = wrapEl.clientHeight;
+      // Tiles wrap within one grid period, so the period must be at least one
+      // tile wider and taller than the window onto it or a blank band shows at
+      // the far edge. On very wide screens that means larger tiles.
+      state.tileW = Math.max(
+        w < 720 ? 232 : Math.min(400, Math.max(280, w / 3.15)),
+        w / (COLS - 1),
+        h / ((ROWS - 1) * 1.22),
+      );
       state.tileH = state.tileW * 1.22;
       tiles.forEach((t) => {
         t.style.width = `${state.tileW - 16}px`;
@@ -73,21 +69,22 @@ export default function WorldGrid() {
     const gridW = () => state.tileW * COLS;
     const gridH = () => state.tileH * ROWS;
 
+    // Where tile i sits for a given plane offset, wrapped into one period.
+    const at = (i, x, y) => [
+      gsap.utils.wrap(-state.tileW, gridW() - state.tileW, (i % COLS) * state.tileW + x),
+      gsap.utils.wrap(-state.tileH, gridH() - state.tileH, Math.floor(i / COLS) * state.tileH + y),
+    ];
+
     const render = () => {
-      const wrapX = gsap.utils.wrap(-state.tileW, gridW() - state.tileW);
-      const wrapY = gsap.utils.wrap(-state.tileH, gridH() - state.tileH);
       tiles.forEach((t, i) => {
-        const col = i % COLS;
-        const row = Math.floor(i / COLS);
-        const px = wrapX(col * state.tileW + state.x);
-        const py = wrapY(row * state.tileH + state.y);
+        const [px, py] = at(i, state.x, state.y);
         t.style.transform = `translate3d(${px}px, ${py}px, 0)`;
       });
     };
 
     let raf = 0;
     const loop = () => {
-      if (!state.dragging && !reduced) {
+      if (!state.dragging && !state.focused && !reduced) {
         // Gentle drift when nobody is touching it — the plane stays alive.
         state.idle += 1;
         if (state.idle > 90) {
@@ -152,16 +149,47 @@ export default function WorldGrid() {
     };
     wrapEl.addEventListener('keydown', key);
 
+    /* Keyboard focus on a tile: glide it to the middle and hold the drift, so
+       tabbing through the plane walks through every project. The browser also
+       scrolls a clipped container to reveal a focused child, which would shift
+       the whole plane under its edge fades, so that scroll is undone. */
+    const focusIn = (e) => {
+      const i = tiles.findIndex((t) => t.contains(e.target));
+      if (i < 0) return;
+      state.focused = true;
+      state.idle = 0;
+      setHint(false);
+      const [px, py] = at(i, state.x, state.y);
+      state.tx = state.x + (wrapEl.clientWidth - state.tileW) / 2 - px;
+      state.ty = state.y + (wrapEl.clientHeight - state.tileH) / 2 - py;
+      if (reduced) {
+        state.x = state.tx;
+        state.y = state.ty;
+      }
+    };
+    const focusOut = (e) => {
+      if (!wrapEl.contains(e.relatedTarget)) state.focused = false;
+    };
+    const unscroll = () => {
+      if (wrapEl.scrollLeft || wrapEl.scrollTop) wrapEl.scrollTo(0, 0);
+    };
+    wrapEl.addEventListener('focusin', focusIn);
+    wrapEl.addEventListener('focusout', focusOut);
+    wrapEl.addEventListener('scroll', unscroll);
+
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
       wrapEl.removeEventListener('pointerdown', down);
       wrapEl.removeEventListener('keydown', key);
+      wrapEl.removeEventListener('focusin', focusIn);
+      wrapEl.removeEventListener('focusout', focusOut);
+      wrapEl.removeEventListener('scroll', unscroll);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
       window.removeEventListener('pointercancel', up);
     };
-  }, [fine, reduced]);
+  }, [fine, reduced, COLS, ROWS]);
 
   return (
     <section id="world" className="relative bg-ink py-[clamp(72px,12vh,132px)] text-bone">
@@ -245,6 +273,8 @@ function Cell({ cell }) {
       </Link>
     );
   }
+
+  if (cell.kind === 'blank') return <div className="h-full w-full" aria-hidden="true" />;
 
   if (cell.kind === 'stat') {
     return (

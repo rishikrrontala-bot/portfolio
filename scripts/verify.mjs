@@ -260,6 +260,88 @@ console.log('\n── work index: five categories ──');
   await page.close();
 }
 
+console.log('\n── world plane ──');
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(e.message));
+  await page.goto(BASE, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(2500);
+  await page.locator('button[aria-label="Click & hold to enter the site"]').click();
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => document.getElementById('world').scrollIntoView());
+  await page.waitForTimeout(800);
+
+  const plane = () =>
+    page.evaluate(() => {
+      const wrap = document.querySelector('#world [role="region"]');
+      const w = wrap.getBoundingClientRect();
+      const tiles = [...wrap.querySelectorAll(':scope > div > div')];
+      const rects = tiles.map((t) => t.getBoundingClientRect());
+      const textOver = [];
+      tiles.forEach((t, i) => {
+        for (const k of t.querySelectorAll('p, span')) {
+          const r = k.getBoundingClientRect();
+          if (r.width && (r.right > rects[i].right + 1 || r.bottom > rects[i].bottom + 1)) {
+            textOver.push(k.textContent.trim().slice(0, 30));
+          }
+        }
+      });
+      return {
+        slugs: [...new Set([...wrap.querySelectorAll('a[href*="/work/"]')].map((a) => a.getAttribute('href').split('/').pop()))],
+        left: Math.min(...rects.map((r) => r.left)) - w.left,
+        right: Math.max(...rects.map((r) => r.right)) - w.right,
+        top: Math.min(...rects.map((r) => r.top)) - w.top,
+        bottom: Math.max(...rects.map((r) => r.bottom)) - w.bottom,
+        textOver,
+      };
+    });
+
+  const first = await plane();
+  const missing = projects.map((p) => p.slug).filter((s) => !first.slugs.includes(s));
+  check(
+    missing.length === 0 && first.slugs.length === projects.length,
+    `all ${projects.length} projects are on the plane`,
+    `plane is missing ${missing.join(', ') || '—'} (${first.slugs.length} of ${projects.length})`,
+  );
+
+  // The plane must cover its window edge to edge at any width; it used to
+  // leave a blank band on screens wider than four tiles.
+  for (const [w, h] of [[390, 844], [1440, 900], [1920, 1080], [2560, 1300]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.waitForTimeout(600);
+    const r = await plane();
+    check(
+      r.left <= 0 && r.right >= 0 && r.top <= 0 && r.bottom >= 0,
+      `tiles cover the plane edge to edge at ${w}px`,
+      `blank band at ${w}px (left ${r.left}, right ${r.right}, top ${r.top}, bottom ${r.bottom})`,
+    );
+    check(r.textOver.length === 0, `no text spills out of a tile at ${w}px`, `text spills out at ${w}px: ${r.textOver.join('; ')}`);
+  }
+
+  // Keyboard: focusing a project far off-screen brings it into the middle,
+  // without the browser scrolling the clipped plane out from under its fades.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForTimeout(500);
+  const last = projects[projects.length - 1];
+  await page.locator(`#world a[href$="/work/${last.slug}"]`).focus();
+  await page.waitForTimeout(500);
+  const focus = await page.evaluate(() => {
+    const wrap = document.querySelector('#world [role="region"]');
+    const w = wrap.getBoundingClientRect();
+    const a = document.activeElement.getBoundingClientRect();
+    return {
+      scrolled: wrap.scrollLeft + wrap.scrollTop,
+      inside: a.left >= w.left && a.right <= w.right && a.top >= w.top && a.bottom <= w.bottom,
+    };
+  });
+  check(focus.scrolled === 0, 'focusing a tile does not scroll the plane', `plane scrolled by ${focus.scrolled}px on focus`);
+  check(focus.inside, `focused tile (${last.title}) is brought fully into view`, `focused tile ${last.title} is outside the plane`);
+
+  check(errs.length === 0, 'no runtime errors on the plane', `page errors: ${errs.join('; ')}`);
+  await page.close();
+}
+
 await browser.close();
 
 console.log(
