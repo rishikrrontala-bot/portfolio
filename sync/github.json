@@ -162,6 +162,24 @@
       "readme": "# DSH Hacks V2: Rishik Rontala's entry\n\n🚧 **In progress.** This repository is being built for **[DSH Hacks V2 ($100k+ in prizes!)](https://dsh-hacks-v2.devpost.com/)**, deadline **Sun Nov 8, 2026 · 2:45 AM EST**.\n\nThe finished project, live demo and video links will replace this page. Live site (once deployed): https://rishikrrontala-bot.github.io/dsh-hacks-v2/\n\nBuilt by **Rishik Rontala**.\n"
     },
     {
+      "name": "dynamic-island",
+      "url": "https://github.com/rishikrrontala-bot/dynamic-island",
+      "description": "Dynamic Island for Mac: music, AirPods, a file shelf, a focus timer and battery around the notch.",
+      "homepage": "https://rishikrrontala-bot.github.io/dynamic-island/",
+      "has_pages": true,
+      "pages_url": "https://rishikrrontala-bot.github.io/dynamic-island/",
+      "default_branch": "main",
+      "archived": false,
+      "created_at": "2026-11-06T19:53:23Z",
+      "topics": [],
+      "language": "HTML",
+      "languages": {
+        "HTML": 112274
+      },
+      "license": null,
+      "readme": "# Dynamic Island for Mac\n\nA free Mac app that turns the notch into a small live screen: music, AirPods,\na shelf for files, a focus timer and your battery, right by the camera.\n\n**[Download it here →](https://rishikrrontala-bot.github.io/dynamic-island/)**\n\nOr grab `Dynamic-Island.zip` straight from the\n[latest release](https://github.com/rishikrrontala-bot/dynamic-island/releases/latest).\n\n## Install\n\n1. Download `Dynamic-Island.zip`. Safari usually unzips it for you.\n2. Drag **Dynamic Island** into **Applications**.\n3. Open it. macOS says it can't verify the app, so click **Done**.\n4. Open **System Settings → Privacy & Security**, scroll to **Security** and\n   click **Open Anyway**, then **Open Anyway** again and enter your password.\n   On macOS 13 or 14 you can Control-click the app and choose **Open** instead.\n5. Allow Bluetooth so AirPods banners work.\n\nThe app is signed by its builder but not notarized by Apple yet, which is why\nmacOS asks once. Each release lists the ZIP's SHA-256 so you can check it with\n`shasum -a 256 ~/Downloads/Dynamic-Island.zip`.\n\n## What it needs\n\n- A Mac with Apple silicon, on macOS 13 Ventura or later\n- Made for MacBooks with a notch; on other displays it drops down from the top\n  center and opens from the menu bar icon\n\n## What it does and doesn't do\n\nIt uses public macOS features only and stays on your Mac. The one network\nrequest is Spotify album art, loaded from Spotify's own image server. It doesn't\nreplace the volume and brightness pop-ups, show notifications, or change AirPods\nnoise control, because macOS has no public way to do those.\n\nBuilt by Rishik Rontala. This repository holds the download page and releases.\n"
+    },
+    {
       "name": "earshot",
       "url": "https://github.com/rishikrrontala-bot/earshot",
       "description": "Send a short message to every phone in the room using nothing but sound. A 16-FSK acoustic modem in the browser — no internet, no pairing, no install.",
