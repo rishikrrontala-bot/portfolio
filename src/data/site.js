@@ -653,6 +653,34 @@ const work = [
       { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/explain-it-back' },
     ],
   },
+  {
+    slug: 'dynamic-island',
+    title: 'Dynamic Island',
+    titleLines: ['Dynamic', 'Island'],
+    kicker: 'Mac utility · Solo build',
+    date: '2026-11-06',
+    role: 'Solo — concept, macOS build, download page and release packaging',
+    status: 'Shipped',
+    category: 'Tools',
+    hue: 113,
+    summary: 'A free Mac app that turns the notch into a small live screen for music, AirPods, a file shelf, a focus timer and battery, built only on public macOS APIs.',
+    lead: 'The notch is already there. It did not need to stay empty.',
+    body: [
+      'Dynamic Island brings music controls, AirPods connection banners, a drop-zone for files, a focus timer and the battery readout right next to the camera, on any Apple silicon Mac running macOS 13 Ventura or later. On a MacBook without a notch it drops down from the top centre instead, and opens from a menu bar icon either way.',
+      'It is signed by its builder but not yet notarised by Apple, so macOS asks once before it will open — the README walks through the Gatekeeper override step by step, and each release publishes the ZIP\'s SHA-256 so anyone installing it can check what they downloaded.',
+      'The scope is deliberately bounded to what the public APIs allow: the one network request is Spotify album art, pulled from Spotify\'s own image server, and the app does not duplicate the system volume or brightness pop-ups, surface notifications, or touch AirPods noise control — macOS exposes no public way to do any of those, so it does not pretend to.',
+    ],
+    highlights: [
+      ['Platform', 'Apple silicon Mac, macOS 13 Ventura or later'],
+      ['Scope', 'Music, AirPods banners, file shelf, focus timer, battery — public APIs only'],
+      ['Trust', 'Signed but not notarised; every release publishes the ZIP\'s SHA-256'],
+      ['Boundary', 'No system volume/brightness UI, notifications or AirPods noise control — macOS has no public hook for those'],
+    ],
+    links: [
+      { label: 'Live demo', href: 'https://rishikrrontala-bot.github.io/dynamic-island/' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/dynamic-island' },
+    ],
+  },
 ];
 
 export const projects = [...work]
@@ -687,6 +715,7 @@ export const worldFragments = [
   { kind: 'statement', text: 'Every square is paper that actually exists.' },
   { kind: 'statement', text: 'Same twelve cards. The race is who sees the sets first.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
+  { kind: 'statement', text: 'Stay inside the public APIs and the notch becomes a small live screen.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
 
