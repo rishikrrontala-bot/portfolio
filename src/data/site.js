@@ -88,7 +88,7 @@ const work = [
     slug: 'saksi',
     title: 'SAKSI',
     titleLines: ['SAKSI'],
-    kicker: 'COMPSPHERE 12 · Solo build',
+    kicker: 'COMPSPHERE 12 finalist · Solo build',
     date: '2026-11-22',
     role: 'Solo — concept, contract, browser encryption, AI intake and verification',
     status: 'Shipped',
@@ -104,7 +104,7 @@ const work = [
       'The README is also where the project says what it has not got. One-time codes prove membership, not identity, and the residual risks — device, network timing, how codes were issued — are named rather than waved off, with zero-knowledge membership proofs left on the roadmap. The 15 Hardhat tests covering registrar rights, replay protection and the time lock all pass; the matching Foundry suite ships for parity but is recorded as not executed, because Foundry would not install on the build machine in time. The proposal had targeted Lisk Sepolia, which was wound down in June 2026, so the contract is deployed unchanged to Base Sepolia and the README explains the substitution instead of quietly editing the plan.',
     ],
     highlights: [
-      ['Event', 'COMPSPHERE 12 International Web3 Hackathon — solo entry, as team rrr'],
+      ['Event', 'COMPSPHERE 12 International Web3 Hackathon — finalist, one of the top 30 teams'],
       ['Stack', 'Next.js 15, TypeScript, WebCrypto, wagmi + viem, Solidity 0.8.24, Supabase'],
       ['On-chain', 'Two hashes, four timestamps, one status byte — no content, names or IPs'],
       ['Hard part', 'A deadline the contract enforces, not the interface'],

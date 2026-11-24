@@ -13,6 +13,7 @@ import offcutCover from '../assets/work/offcut.jpg';
 import patchlineCover from '../assets/work/patchline.jpg';
 import returnlineCover from '../assets/work/returnline.jpg';
 import runofflabCover from '../assets/work/runofflab.jpg';
+import saksiCover from '../assets/work/saksi.jpg';
 import scentShelfCover from '../assets/work/scent-shelf.jpg';
 import setRoomCover from '../assets/work/set-room.jpg';
 import sightlineCover from '../assets/work/sightline.jpg';
@@ -26,6 +27,7 @@ import withheldCover from '../assets/work/withheld.jpg';
    data in a screenshot is only ever data the app itself labels as such.
    `npm test` checks every key here is a real slug with a file behind it. */
 const covers = {
+  saksi: saksiCover,
   elsewhen: elsewhenCover,
   runofflab: runofflabCover,
   patchline: patchlineCover,
