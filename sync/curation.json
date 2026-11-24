@@ -1,7 +1,8 @@
 {
-  "reviewed": "2026-10-28",
+  "reviewed": "2026-11-23",
   "policy": "Every public repo in sync/github.json is either linked from a project in src/data/site.js or listed under `excluded` with the reason. `npm test` reports any repo that is neither. A placeholder leaves this list when its README documents a working build.",
   "excluded": {
+    "ledgevale": "Downloads repo for Ledge Vale, a Mac app whose source is private. Nothing to download yet — no releases, and the site lists the version as pending with checkout and the trial not live. Becomes a project, linked by its site only, when it ships.",
     "luma-hackathon-fall": "Muslin. The comparison flow works on sample data, but the photo-measurement pipeline is not wired into the app yet.",
     "305hackshellssep2026": "Placeholder: a draft brief, nothing built yet.",
     "acodemic-hackathon": "Placeholder: a draft brief, nothing built yet.",
