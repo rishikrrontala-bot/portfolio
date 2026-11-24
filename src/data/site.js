@@ -85,6 +85,41 @@ export const categories = ['AI & ML', 'Health & Science', 'Education', 'Tools', 
 // for projects with more than one demo or repository.
 const work = [
   {
+    slug: 'saksi',
+    title: 'SAKSI',
+    titleLines: ['SAKSI'],
+    kicker: 'COMPSPHERE 12 · Team entry',
+    date: '2026-11-22',
+    role: 'Team entry \u2014 team rrr',
+    status: 'Shipped',
+    category: 'Tools',
+    hue: 12,
+    summary:
+      'Anonymous, tamper-evident misconduct reporting for universities and teaching hospitals. The report is encrypted in the browser, only its fingerprint and timestamp go on a public chain, and the institution\u2019s acknowledgement is a signed transaction \u2014 so response times become public data.',
+    lead: 'The adversary is whoever runs the database. Today that is the institution being reported.',
+    body: [
+      'SAKSI \u2014 Indonesian for witness \u2014 is a reporting rail for bullying, extortion, harassment and other violence on campuses and in teaching hospitals. A student or medical resident files from any browser with no account, no wallet and no name. The narrative is encrypted in their own browser with AES-256-GCM; what reaches the chain is a keccak commitment over the ciphertext and a block timestamp. Per report, on-chain, that is two 32-byte hashes, four timestamps and one status byte \u2014 no content, no names, no IP addresses.',
+      'The question that decided the architecture was not which chain but why a chain at all, and the answer is who the opponent is. If the institution being reported also operates the database, it can alter or backdate what it holds. So the reporter leaves with a Sealed Receipt \u2014 a PDF and QR carrying the report ID, transaction hash, commitment and salt \u2014 that proves the report existed, and when, without the institution\u2019s cooperation and even if SAKSI itself disappears. The task force has to acknowledge with a wallet-signed transaction, which turns response time into a public number, and a report left past its window can be escalated to the ministry by the reporter, with the deadline enforced by the contract rather than by the interface. Early escalation attempts are rejected on-chain, which is the version of that rule you can actually check.',
+      'The AI only shapes what the reporter already wrote. An open-weight model on Featherless.ai turns a narrative in Bahasa Indonesia or English into a structured case validated with zod, the reporter edits every field before anything is sealed, and nothing is stored. Membership is proved by one-time access codes of which only SHA-256 hashes are kept, so a code shows someone belongs to the institution without recording who received which.',
+      'The README is also where the project says what it has not got. One-time codes prove membership, not identity, and the residual risks \u2014 device, network timing, how codes were issued \u2014 are named rather than waved off, with zero-knowledge membership proofs left on the roadmap. The 15 Hardhat tests covering registrar rights, replay protection and the time lock all pass; the matching Foundry suite ships for parity but is recorded as not executed, because Foundry would not install on the build machine in time. The proposal had targeted Lisk Sepolia, which was wound down in June 2026, so the contract is deployed unchanged to Base Sepolia and the README explains the substitution instead of quietly editing the plan.',
+    ],
+    highlights: [
+      ['Event', 'COMPSPHERE 12 International Web3 Hackathon \u2014 team rrr'],
+      ['Stack', 'Next.js 15, TypeScript, WebCrypto, wagmi + viem, Solidity 0.8.24, Supabase'],
+      ['On-chain', 'Two hashes, four timestamps, one status byte \u2014 no content, names or IPs'],
+      ['Hard part', 'A deadline the contract enforces, not the interface'],
+    ],
+    links: [
+      { label: 'Live app', href: 'https://saksi-compsphere.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/rishikrrontala-bot/saksi' },
+      {
+        label: 'Contract',
+        href: 'https://base-sepolia.blockscout.com/address/0x5ccf07245d652380b1d13f6a72dc351389648150',
+        secondary: true,
+      },
+    ],
+  },
+  {
     slug: 'elsewhen',
     title: 'Elsewhen',
     titleLines: ['Else', 'when'],
@@ -686,6 +721,7 @@ export const worldFragments = [
   { kind: 'stat', label: 'Built', value: `${projects.length} projects` },
   { kind: 'statement', text: 'Every square is paper that actually exists.' },
   { kind: 'statement', text: 'Same twelve cards. The race is who sees the sets first.' },
+  { kind: 'statement', text: 'The adversary is whoever runs the database.' },
   { kind: 'statement', text: 'Knowing when to decline to answer is a feature you have to build.' },
   { kind: 'statement', text: 'I would rather be right slowly.' },
 ];
